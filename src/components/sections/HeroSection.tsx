@@ -26,7 +26,7 @@ export const HeroSection = ({ onNavigate, isPersonalMode }: HeroSectionProps) =>
 
   return (
     <section id="hero" className="min-h-screen flex items-center justify-center relative bg-gradient-subtle paper-texture">
-      <div className="max-w-4xl mx-auto px-6 text-center fade-in fixed bottom-0 right-0 z-50">
+      <div className="max-w-4xl text-center fade-in fixed bottom-0 right-0 z-50">
         {/* Main heading */}
         {/* <h1 className="text-hero mb-6 font-serif text-foreground">
           {isPersonalMode ? personalTitle : professionalTitle}

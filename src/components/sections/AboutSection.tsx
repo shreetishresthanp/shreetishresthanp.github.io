@@ -13,7 +13,7 @@ export const AboutSection = () => {
     'Software Architecture', 'Version Control', 'Testing'
   ];
 
-  const interests = [ 'Deep Learning', 'AI Ethics', 'Computational Linguistics', 'XAI', 'Human-AI Interaction' ];
+  const interests = [ 'Deep Learning', 'Neural Networks', 'AI Ethics', 'Human-Centered Computing', 'XAI'];
 
   return (
     <section id="about" className="py-20 px-6 max-w-6xl mx-auto slide-up">

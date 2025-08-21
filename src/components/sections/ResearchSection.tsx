@@ -6,25 +6,35 @@ import { ExternalLink, FileText, Code, Lightbulb } from 'lucide-react';
 export const ResearchSection = () => {
   const researchProjects = [
     {
-      title: "LLM Evaluation Frameworks",
-      description: "Developing robust evaluation metrics for large language models in domain-specific applications.",
-      status: "In Progress",
-      tags: ["LLMs", "Evaluation", "NLP"],
-      type: "research"
+      title: "Adaptive Tutoring Assistant: LLM-Powered Learning vs. Traditional Methods",
+      description: `RQ: How does an AI-powered tutoring assistant affect overall learning, engagement, and user experience compared to traditional textbook-based study? 
+      Developed an LSAT tutor prototype using Gemini API and Streamlit. Conducted an A/B testing pilot with an AI tutor (experimental group) versus textbook-based learning (control group). Collected pre/post quiz scores and survey feedback to explore benefits and user experience, without aiming for definitive conclusions.`,
+      status: "Completed",
+      tags: ["LLMs", "Education", "Human-Centered NLP"],
+      type: "research",
+      learnMore: "/pdfs/AdaptiveTutoringAssistant.pdf"
+    },
+   {
+      title: "Evaluating NLP-Generated Medical Summaries: Standard Metrics & Human Feedback",
+      // title: "Evaluating Model Outputs with NLP Metrics and Human Feedback for Medical Summaries",
+      description: ` RQ: How readable and semantically accurate are NLP-generated medical summaries? 
+      Evaluated outputs with automated metrics (ROUGE, BLEU, BERTScore, Flesch-Kincaid) 
+      and human Likert-scale feedback, identifying accessibility gaps and proposing improvements 
+      through prompt tuning and domain-specific data.`,
+      status: "Completed",
+      tags: ["LLMs", "NLP Evaluation", "Healthcare NLP"],
+     type: "research",
+      learnMore: "/pdfs/EvaluatingMedicallSummaries.pdf"
     },
     {
-      title: "Ethical AI in Education",
-      description: "Investigating the implications of AI-assisted learning and its impact on educational equity.",
-      status: "Under Review",
-      tags: ["AI Ethics", "Education", "Social Impact"],
-      type: "research"
-    },
-    {
-      title: "Multimodal Learning Systems",
-      description: "Exploring cross-modal representations for enhanced understanding in AI systems.",
-      status: "Published",
-      tags: ["Multimodal", "Deep Learning", "Computer Vision"],
-      type: "research"
+      title: "Usability Testing Study Design for Health Information Chatbots",
+      description: `RQ: How do source citations influence user trust and usability in health information chatbots? 
+      Designed a split-plot study with quantitative metrics (System Usability Scale, Credibility Perception Scale, interaction patterns) 
+      and qualitative thematic analysis of debrief responses to assess trust cues, perceived safety, and clarity.`,
+      status: "Completed",
+      tags: ["Usability", "Human-Centered NLP", "Healthcare AI", "AI Ethics"],
+      type: "research",
+      learnMore:"/pdfs/UsabilityStudyDesign.pdf"
     }
   ];
 
@@ -75,7 +85,7 @@ export const ResearchSection = () => {
                 </div>
               </CardHeader>
               <CardContent>
-                <p className="text-body text-muted-foreground mb-4 leading-relaxed">
+                <p className="text-body text-muted-foreground mb-4 leading-relaxed text-justify">
                   {project.description}
                 </p>
                 <div className="flex flex-wrap gap-2 mb-4">
@@ -85,10 +95,14 @@ export const ResearchSection = () => {
                     </Badge>
                   ))}
                 </div>
-                <Button variant="ghost" size="sm" className="w-full">
-                  <ExternalLink size={16} className="mr-2" />
-                  Learn More
-                </Button>
+                 {project.learnMore && (
+                    <Button variant="ghost" size="sm" className="w-full" asChild>
+                      <a href={project.learnMore} target="_blank" rel="noopener noreferrer">
+                        <ExternalLink size={16} className="mr-2" />
+                        Learn More
+                      </a>
+                    </Button>
+                  )}
               </CardContent>
             </Card>
           ))}

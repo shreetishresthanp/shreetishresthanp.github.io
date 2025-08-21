@@ -2,62 +2,52 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { ExternalLink, Github, Code, Database, Brain } from 'lucide-react';
+import { SiGithub } from '@icons-pack/react-simple-icons';
 
 export const ProjectsSection = () => {
   const projects = [
     {
-      title: "ML Model Evaluation Suite",
-      description: "A comprehensive framework for evaluating large language models across multiple dimensions including accuracy, bias, and computational efficiency.",
-      technologies: ["Python", "PyTorch", "Hugging Face", "Docker"],
-      status: "Active Development",
-      category: "Research Tool",
-      icon: Brain,
-      links: {
-        github: "#",
-        demo: "#"
-      }
-    },
-    {
-      title: "Educational AI Assistant",
-      description: "An intelligent tutoring system that adapts to individual learning styles while maintaining transparency in its reasoning process.",
-      technologies: ["React", "Node.js", "OpenAI API", "PostgreSQL"],
-      status: "Beta Testing",
+      title: "Adaptive Tutoring Assistant",
+      description: `Developed an LLM-powered LSAT tutoring prototype using Streamlit with Firebase backend, leveraging the Gemini API for real-time dialogue-based instruction. 
+      Conducted A/B testing comparing AI tutor interactions with textbook-based learning, integrating pre/post quizzes and user surveys to assess critical thinking outcomes.`,
+      technologies: ["Python", "Streamlit", "Firebase", "Gemini API"],
+      status: "Completed",
       category: "AI Application",
       icon: Code,
       links: {
-        github: "#",
-        demo: "#"
+        github: "https://github.com/shreetishresthanp/adaptive_tutoring_assistant",
+        demo: "https://huggingface.co/spaces/LSATAdaptiveTutor/chatbot_tutor"
       }
     },
     {
-      title: "Research Paper Analyzer",
-      description: "NLP tool that extracts key insights from academic papers and identifies potential research gaps in specific domains.",
-      technologies: ["Python", "spaCy", "transformers", "FastAPI"],
-      status: "Published",
-      category: "NLP Tool",
-      icon: Database,
-      links: {
-        github: "#",
-        paper: "#"
-      }
-    },
-    {
-      title: "Ethical AI Framework",
-      description: "A practical framework for assessing and improving the ethical implications of AI systems in educational contexts.",
-      technologies: ["Python", "Jupyter", "pandas", "scikit-learn"],
-      status: "Under Review",
-      category: "Research",
+      title: "Medical Summaries Evaluation Pipeline",
+      description: `Built an NLP evaluation pipeline combining automated metrics (ROUGE, BLEU, BERTScore, Flesch-Kincaid) with human feedback surveys. Generated 150 plain-language summaries of medical abstracts and automated result analysis to assess readability and semantic quality.`  ,
+      technologies: ["Python", "Transformers", "Hugging Face"],
+      status: "Completed",
+      category: "NLP Evaluation",
       icon: Brain,
       links: {
-        github: "#",
-        paper: "#"
+        github: "https://github.com/shreetishresthanp/medical_summaries_evaluation",
+        paper: "/pdfs/EvaluatingMedicalSummaries.pdf"
       }
     }
+    // {
+    //   title: "Research Paper Analyzer",
+    //   description: "NLP tool that extracts key insights from academic papers and identifies potential research gaps in specific domains.",
+    //   technologies: ["Python", "spaCy", "transformers", "FastAPI"],
+    //   status: "Published",
+    //   category: "NLP Tool",
+    //   icon: Database,
+    //   links: {
+    //     github: "#",
+    //     paper: "#"
+    //   }
+    // }
   ];
 
   const getStatusColor = (status: string): "default" | "secondary" | "outline" => {
     const statusColors: Record<string, "default" | "secondary" | "outline"> = {
-      "Active Development": "default",
+      "Completed": "default",
       "Beta Testing": "secondary",
       "Published": "outline",
       "Under Review": "secondary"
@@ -114,22 +104,28 @@ export const ProjectsSection = () => {
                 {/* Action Buttons */}
                 <div className="flex gap-2">
                   {project.links.github && (
-                    <Button variant="ghost" size="sm">
-                      <Github size={16} className="mr-2" />
-                      Code
+                    <Button variant="ghost" size="sm" asChild>
+                      <a href={project.links.github} target="_blank" rel="noopener noreferrer">
+                        <SiGithub size={16} className="mr-2" />
+                        Code
+                      </a>
                     </Button>
                   )}
                   {project.links.demo && (
-                    <Button variant="ghost" size="sm">
+                    <Button variant="ghost" size="sm" asChild>
+                      <a href={project.links.demo} target="_blank" rel="noopener noreferrer">
                       <ExternalLink size={16} className="mr-2" />
-                      Demo
+                        Demo
+                      </a>
                     </Button>
                   )}
                   {project.links.paper && (
-                    <Button variant="ghost" size="sm">
-                      <ExternalLink size={16} className="mr-2" />
-                      Paper
-                    </Button>
+                      <Button variant="ghost" size="sm" asChild>
+                        <a href={project.links.paper} target="_blank" rel="noopener noreferrer">
+                          <ExternalLink size={16} className="mr-2" />
+                          Paper
+                        </a>
+                      </Button>            
                   )}
                 </div>
               </CardContent>

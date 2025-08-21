@@ -336,6 +336,7 @@ export const JourneySection = () => {
             <CardHeader className="pb-3">
               <CardTitle className="text-2xl font-serif transition-colors duration-500" style={{ color: currentPhase.color }}>
                 {currentPhase.title}
+                : maybe make cards in list format: like news
               </CardTitle>
               <p className="text-sm text-gray-500 transition-colors duration-300">{currentPhase.period}</p>
             </CardHeader>
