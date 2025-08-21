@@ -1,5 +1,4 @@
 // journeyUtils.js - Utility functions for the Journey component
-
 import { dateMapping } from './milestones';
 
 /**
@@ -25,40 +24,105 @@ export const calculateMilestonePosition = (milestone) => {
  * Calculate Y position along the curved path based on X progress
  * Returns the base path position (markers will be offset above/below this)
  */
-export const calculatePathYPosition = (xPosition) => {
-  const pathProgress = xPosition / 100;
-  
-  // Simplified curve that stays more centered
-  if (pathProgress < 0.33) {
-    return 200 - 40 * Math.sin(pathProgress * Math.PI * 3);
-  } else if (pathProgress < 0.66) {
-    return 180 + 30 * Math.sin((pathProgress - 0.33) * Math.PI * 3);
-  } else {
-    return 190 - 20 * Math.sin((pathProgress - 0.66) * Math.PI * 3);
-  }
+// Utility to evaluate a quadratic Bézier curve
+const quadraticBezier = (t: number, p0: number, p1: number, p2: number): number => {
+  return (1 - t) * (1 - t) * p0 + 2 * (1 - t) * t * p1 + t * t * p2;
+};
+
+/**
+ * Given an x position (0 - 1000), calculate approximate y on the winding path.
+ */
+export const calculatePathYPosition = (xPosition: number): number => {
+  // Define path segments based on your SVG d attribute
+  // Each segment has: startX, endX, startY, controlY, endY
+  const segments = [
+    { startX: 0,   endX: 200, startY: 194, controlY: 158, endY: 174 },  // first Q
+    { startX: 200, endX: 400, startY: 174, controlY: 214, endY: 174 },
+    { startX: 400, endX: 600, startY: 174, controlY: 134, endY: 184 },
+    { startX: 600, endX: 800, startY: 184, controlY: 224, endY: 194 },
+    { startX: 800, endX: 1000,startY: 194, controlY: 164, endY: 194 },
+  ];
+
+  // Find which segment xPosition falls into
+  const seg = segments.find(s => xPosition >= s.startX && xPosition <= s.endX);
+  if (!seg) return 200; // default baseline if out of range
+
+  // Normalize t between 0 and 1 for the segment
+  const t = (xPosition - seg.startX) / (seg.endX - seg.startX);
+
+  // Compute quadratic Bézier Y
+  return quadraticBezier(t, seg.startY, seg.controlY, seg.endY);
 };
 
 /**
  * Calculate marker position with alternating above/below path placement
  */
-export const calculateMarkerPosition = (milestone, milestoneIndex) => {
+export const calculateXPosition = (milestone) => {
   const xPosition = calculateMilestonePosition(milestone);
-  const baseYPosition = calculatePathYPosition(xPosition);
-  
-  // Alternate markers above and below the path
-  const isAbove = milestoneIndex % 2 === 0;
-  const offset = 60; // Distance from path
-  
-  const yPosition = isAbove 
-    ? Math.max(baseYPosition - offset, 80)  // Above path, with minimum distance from top
-    : Math.min(baseYPosition + offset, 320); // Below path, with maximum distance from bottom
-  
-  return {
-    x: Math.max(5, Math.min(xPosition, 95)), // Keep within 5-95% with smaller margins
-    y: yPosition,
-    isAbove
-  };
+  return Math.max(5, Math.min(xPosition, 95)) * 10; // Keep within 5-95% with smaller margins
 };
+
+// Utility: get path point + tangent at a given x
+export function getPointAndTangentAtX(path: SVGPathElement, x: number) {
+  const totalLength = path.getTotalLength();
+
+  // Binary search to find length where point.x ~ target x
+  let start = 0;
+  let end = totalLength;
+  let targetPoint: DOMPoint | null = null;
+
+  while (start <= end) {
+    const mid = (start + end) / 2;
+    const pt = path.getPointAtLength(mid);
+
+    if (Math.abs(pt.x - x) < 0.5) {
+      targetPoint = pt;
+      break;
+    } else if (pt.x < x) {
+      start = mid + 0.5;
+    } else {
+      end = mid - 0.5;
+    }
+  }
+
+  if (!targetPoint) {
+    targetPoint = path.getPointAtLength(start);
+  }
+
+  // Get tangent (slope) by looking slightly ahead
+  const ahead = path.getPointAtLength(Math.min(totalLength, start + 1));
+  const tangent = { dx: ahead.x - targetPoint.x, dy: ahead.y - targetPoint.y };
+
+  return { point: targetPoint, tangent };
+}
+
+// Calculate marker position hugging the curve
+export function calculateYPosition(
+  path: SVGPathElement,
+  x: number,
+  globalIndex: number,
+  offset: number = 30
+) {
+  const { point, tangent } = getPointAndTangentAtX(path, x);
+
+  // Perpendicular vector
+  const perp = { dx: -tangent.dy, dy: tangent.dx };
+  const length = Math.sqrt(perp.dx * perp.dx + perp.dy * perp.dy);
+
+  // Normalize
+  const ux = perp.dx / length;
+  const uy = perp.dy / length;
+
+    // Use global index for alternating pattern across entire timeline
+  const isAbove = globalIndex % 2 === 0;
+  const finalOffset = isAbove ? offset : -offset;
+
+  return {
+    x: point.x + ux * finalOffset,
+    y: point.y + uy * finalOffset,
+  };
+}
+
 
 /**
  * Get milestones for a specific phase
@@ -70,7 +134,7 @@ export const getMilestonesByPhase = (milestones, phaseId) => {
 /**
  * Create click handler for milestone with animation
  */
-export const createMilestoneClickHandler = (milestone, selectedMilestone, setSelectedMilestone) => {
+export const createMilestoneClickHandler = (milestone, selectedMilestone, setSelectedMilestone, setActivePhase) => {  
   return (e) => {
     e.stopPropagation();
     
@@ -83,43 +147,8 @@ export const createMilestoneClickHandler = (milestone, selectedMilestone, setSel
     }, 150);
     
     setSelectedMilestone(selectedMilestone?.id === milestone.id ? null : milestone);
-  };
-};
+    setActivePhase(milestone.phase);
 
-/**
- * Create click handler for phase with animation and ripple effect
- */
-export const createPhaseClickHandler = (
-  phaseId, 
-  setActivePhase, 
-  setSelectedMilestone, 
-  setClickedPhase, 
-  setClickPosition
-) => {
-  return (event) => {
-    // Capture click position for ripple effect
-    const rect = event.currentTarget.getBoundingClientRect();
-    setClickPosition({
-      x: event.clientX - rect.left,
-      y: event.clientY - rect.top
-    });
-    
-    // Trigger pop animation
-    setClickedPhase(phaseId);
-    
-    // Add scale animation to the entire phase
-    const element = event.currentTarget;
-    element.style.transform = 'scale(1.08)';
-    element.style.zIndex = '20';
-    
-    setTimeout(() => {
-      element.style.transform = 'scale(1)';
-      element.style.zIndex = 'auto';
-      setClickedPhase(null);
-    }, 200);
-    
-    setActivePhase(phaseId);
-    setSelectedMilestone(null);
   };
 };
 
@@ -181,4 +210,13 @@ export const generateFloatingParticles = (count = 15) => {
     animationDelay: `${i * 0.3}s`,
     animationDuration: `${4 + i * 0.1}s`
   }));
+};
+
+// pathRef: ref to your SVG path
+export const getPathPointAtProgress = (pathRef, progress) => {
+  if (!pathRef?.current) return { x: 0, y: 0 };
+  const path = pathRef.current;
+  const length = path.getTotalLength();
+  const point = path.getPointAtLength(progress * length);
+  return { x: point.x, y: point.y };
 };

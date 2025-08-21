@@ -101,19 +101,36 @@ export const AboutSection = () => {
             </div>
           </div>
         </div>
+        
 
         <div>
-          <h3 className="text-card-title font-serif mb-6 flex items-center">
-            <Lightbulb className="mr-3" size={20} />
-            Research Interests
-          </h3>
-          <div className="flex flex-wrap gap-2">
-            {interests.map((interest) => (
+           <Card className="hover-lift bg-card shadow-soft">
+          <CardContent className="p-8">
+            <div className="flex items-center mb-6">
+              <Lightbulb className="text-accent mr-3" size={20} />
+              <h3 className="text-card-title font-serif">Research Interests</h3>
+            </div>
+            <div className="text-body space-y-3">
+              <p className="leading-relaxed">
+              I'm curious about deep learning and models that can effectively adapt to non-linear variations.
+             
+              </p>
+              <p className="leading-relaxed text-muted-foreground text-justify">
+ To what extent can we mimic cognitive processes in neural networks to aid decision-making?
+              How do we effectively scale such computations?
+              How can we ensure data integrity when using such models?                 </p>
+                          <div className="flex flex-wrap gap-2">
+
+                {interests.map((interest) => (
               <Badge key={interest} variant="outline" className="font-sans">
                 {interest}
               </Badge>
-            ))}
-          </div>
+                ))}
+                  </div>
+            </div>
+          </CardContent>
+          </Card>
+          
         </div>
       </div>
     </section>

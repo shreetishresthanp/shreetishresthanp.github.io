@@ -24,7 +24,7 @@ export const ResearchSection = () => {
       status: "Completed",
       tags: ["LLMs", "NLP Evaluation", "Healthcare NLP"],
      type: "research",
-      learnMore: "/pdfs/EvaluatingMedicallSummaries.pdf"
+      learnMore: "/pdfs/EvaluatingMedicalSummaries.pdf"
     },
     {
       title: "Usability Testing Study Design for Health Information Chatbots",
@@ -65,10 +65,16 @@ export const ResearchSection = () => {
         </p>
       </div>
 
+      {/* Publications */}
+      <div className="mb-16">
+        <h3 className="text-2xl font-serif mb-8">Publications</h3>
+        <p className="text-body text-muted-foreground max-w-2xl text-xl">
+          Coming Soon ... </p>
+      </div>
       {/* Current Research Projects */}
       <div className="mb-16">
         <h3 className="text-2xl font-serif mb-8">Current Projects</h3>
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid md:grid-cols-2 lg:grid-cols-2 gap-6">
           {researchProjects.map((project, index) => (
             <Card key={index} className="hover-lift bg-card shadow-soft">
               <CardHeader>
@@ -88,6 +94,7 @@ export const ResearchSection = () => {
                 <p className="text-body text-muted-foreground mb-4 leading-relaxed text-justify">
                   {project.description}
                 </p>
+
                 <div className="flex flex-wrap gap-2 mb-4">
                   {project.tags.map((tag) => (
                     <Badge key={tag} variant="outline" className="text-xs">
@@ -109,24 +116,17 @@ export const ResearchSection = () => {
         </div>
       </div>
 
-      {/* Ongoing Work */}
-      <div>
-        <h3 className="text-2xl font-serif mb-8">Ongoing Work</h3>
-        <div className="grid md:grid-cols-3 gap-6">
-          {ongoingWork.map((work, index) => (
-            <Card key={index} className="hover-lift bg-card shadow-soft">
-              <CardContent className="p-6">
-                <div className="flex items-center mb-4">
-                  <work.icon className="text-accent mr-3" size={24} />
-                  <h4 className="font-serif font-medium">{work.title}</h4>
-                </div>
-                <p className="text-body text-muted-foreground leading-relaxed">
-                  {work.description}
-                </p>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
+      {/* Research Statement */}
+      <div className="mt-16 max-w-3xl mx-auto">
+        <Card className="bg-gradient-subtle shadow-soft">
+          <CardContent className="p-8 text-center">
+            <Code className="mx-auto mb-4 text-accent" size={32} />
+            <h3 className="text-xl font-serif mb-4">Research Statement</h3>
+            <p className="text-body text-muted-foreground leading-relaxed">
+              My goal lies in learning to integrate neural networks in decision support systems, ensuring we can build models that are robust, scalable, and interpretable.
+            </p>
+          </CardContent>
+        </Card>
       </div>
     </section>
   );

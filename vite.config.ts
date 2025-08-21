@@ -16,6 +16,7 @@ export default defineConfig(({ mode }) => ({
     optimizeDeps: {
     include: ['pdfjs-dist']
   },
+    // base: "/shreetishresthanp.github.io",
   plugins: [
     react(),
     mode === 'development' &&

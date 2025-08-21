@@ -80,11 +80,11 @@ export const HeroSection = ({ onNavigate, isPersonalMode }: HeroSectionProps) =>
         </div> */}
         
         {/* Social Links */}
-        <div className="flex justify-center gap-4 mb-12">
+        <div className="flex justify-center gap-4 mb-10 mr-4">
           <Button 
             variant="ghost" 
             size="sm" 
-            className="hover-lift"
+            className="hover-lift rounded-none"
             onClick={() => window.open('https://github.com/shreetishresthanp', '_blank')}
           >
             <Github size={20} />
@@ -92,12 +92,12 @@ export const HeroSection = ({ onNavigate, isPersonalMode }: HeroSectionProps) =>
           <Button 
             variant="ghost" 
             size="sm" 
-            className="hover-lift"
+            className="hover-lift rounded-none"
             onClick={() => window.open('https://linkedin.com/in/shreeti-shrestha', '_blank')}
           >
             <Linkedin size={20} />
           </Button>
-          <Button variant="ghost" size="sm" className="hover-lift">
+          <Button variant="ghost" size="sm" className="hover-lift rounded-none">
             <Mail size={20} />
           </Button>
         </div>

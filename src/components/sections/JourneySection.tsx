@@ -1,46 +1,53 @@
+
+
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Download, Calendar } from 'lucide-react';
+import { Download } from 'lucide-react';
 
 // Import data and utilities
 import { milestones, phases, eventTypeColors } from '../../lib/milestones';
 import { 
-  getMilestonesByPhase, 
-  generateFloatingParticles,
-  calculateMilestonePosition,
-  calculatePathYPosition
+  calculateXPosition,
+  calculateYPosition,
+  getMilestonesByPhase
 } from '../../lib/journeyUtils';
+
 import { MilestoneMarker } from '../../lib/MilestoneMarker';
-import PDFViewer from './pdfviewer';
+import { useRef, useEffect } from "react";
 
 export const JourneySection = () => {
   const [activePhase, setActivePhase] = useState('college');
   const [selectedMilestone, setSelectedMilestone] = useState(null);
 
-  // Get current phase data and milestones
   const currentPhase = phases[activePhase];
   const phaseMilestones = getMilestonesByPhase(milestones, activePhase);
-  const floatingParticles = generateFloatingParticles(15);
 
-  //Handle Resume Download
+  const pathRef = useRef<SVGPathElement | null>(null);
+  const [pathElement, setPathElement] = useState<SVGPathElement | null>(null);
+
+  // On mount, store the path element
+  useEffect(() => {
+    if (pathRef.current) {
+      setPathElement(pathRef.current);
+    }
+  }, []);
+
+  // Resume download
   const handleResumeDownload = () => {
     const link = document.createElement('a');
-    link.href = '/test.pdf';       // path to PDF in public folder
-    link.download = 'Shreeti_Shrestha_Resume.pdf'; // desired file name
+    link.href = '/test.pdf';
+    link.download = 'Shreeti_Shrestha_Resume.pdf';
     link.click();
   };
 
-
-  // Handle milestone click to switch phase and highlight
   const handleMilestoneClick = (milestone) => {
     setActivePhase(milestone.phase);
     setSelectedMilestone(milestone);
   };
 
-  // Handle phase click to switch and dim others
   const handlePhaseClick = (phaseId) => {
     setActivePhase(phaseId);
     setSelectedMilestone(null);
@@ -51,7 +58,10 @@ export const JourneySection = () => {
       <div className="text-center mb-16">
         <h2 className="text-4xl font-bold mb-4 font-serif">Professional Journey</h2>
         <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-          From curiosity to research expertise - a path of continuous learning and growth
+          From curiosity to research expertise — a path of continuous learning and growth. 
+          </p>
+        <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+          While journeys are seldom linear, here's a look at key phases that shaped my path.
         </p>
       </div>
 
@@ -61,97 +71,54 @@ export const JourneySection = () => {
           <TabsTrigger value="resume">Download Resume</TabsTrigger>
         </TabsList>
 
+        {/* ---------------- Interactive Timeline ---------------- */}
         <TabsContent value="interactive" className="space-y-8">
-          {/* Timeline Container */}
           <div className="relative w-full h-96 bg-gradient-to-b from-slate-50/50 to-transparent rounded-xl overflow-hidden border">
-            
-            {/* Phase Backgrounds with adjusted proportions */}
-            <div className="absolute inset-0">
-              {/* College Phase (2018-2021) - 40% */}
-              <div
-                className={`absolute inset-y-0 cursor-pointer transition-all duration-700 ease-out hover:scale-[1.01] ${
-                  activePhase === 'college' ? 'opacity-100 shadow-lg' : 'opacity-60 hover:opacity-80'
-                }`}
-                style={{
-                  left: '0%',
-                  width: '40%',
-                  backgroundColor: phases.college.bgColor,
-                  borderRight: `2px solid ${phases.college.color}20`,
-                  transform: activePhase === 'college' ? 'scale(1.01)' : 'scale(1)',
-                  zIndex: activePhase === 'college' ? 5 : 1
-                }}
-                onClick={() => handlePhaseClick('college')}
-              >
-                <div className="absolute top-4 left-0 right-0 flex items-center justify-center">
-                  <div className="text-center transform transition-all duration-500 hover:scale-105">
-                    <h3 className="text-sm font-serif font-bold mb-1 transition-colors duration-300" style={{ color: phases.college.color }}>
-                      College Years
-                    </h3>
-                    <p className="text-xs opacity-75 transition-colors duration-300" style={{ color: phases.college.color }}>
-                      {phases.college.period}
-                    </p>
-                  </div>
-                </div>
-              </div>
 
-              {/* Industry Phase (2022-2024) - 40% */}
-              <div
-                className={`absolute inset-y-0 cursor-pointer transition-all duration-700 ease-out hover:scale-[1.01] ${
-                  activePhase === 'industry' ? 'opacity-100 shadow-lg' : 'opacity-60 hover:opacity-80'
-                }`}
-                style={{
-                  left: '40%',
-                  width: '40%',
-                  backgroundColor: phases.industry.bgColor,
-                  borderLeft: `2px solid ${phases.industry.color}20`,
-                  borderRight: `2px solid ${phases.industry.color}20`,
-                  transform: activePhase === 'industry' ? 'scale(1.01)' : 'scale(1)',
-                  zIndex: activePhase === 'industry' ? 5 : 1
-                }}
-                onClick={() => handlePhaseClick('industry')}
-              >
-                <div className="absolute top-4 left-0 right-0 flex items-center justify-center">
-                  <div className="text-center transform transition-all duration-500 hover:scale-105">
-                    <h3 className="text-sm font-serif font-bold mb-1 transition-colors duration-300" style={{ color: phases.industry.color }}>
-                      Industry Experience
-                    </h3>
-                    <p className="text-xs opacity-75 transition-colors duration-300" style={{ color: phases.industry.color }}>
-                      {phases.industry.period}
-                    </p>
-                  </div>
-                </div>
-              </div>
+            {/* Phase Backgrounds */}
+            {Object.entries(phases).map(([phaseId, phase], idx) => {
+              const phaseWidth = phaseId === 'college' ? '45%' : phaseId === 'industry' ? '40%' : '40%';
+              const phaseLeft = phaseId === 'college' ? '0%' : phaseId === 'industry' ? '35%' : '65%';
+              const isActive = activePhase === phaseId;
 
-              {/* Research Phase (2025+) - 20% */}
-              <div
-                className={`absolute inset-y-0 cursor-pointer transition-all duration-700 ease-out hover:scale-[1.01] ${
-                  activePhase === 'research' ? 'opacity-100 shadow-lg' : 'opacity-60 hover:opacity-80'
-                }`}
-                style={{
-                  left: '80%',
-                  width: '20%',
-                  backgroundColor: phases.research.bgColor,
-                  borderLeft: `2px solid ${phases.research.color}20`,
-                  transform: activePhase === 'research' ? 'scale(1.01)' : 'scale(1)',
-                  zIndex: activePhase === 'research' ? 5 : 1
-                }}
-                onClick={() => handlePhaseClick('research')}
-              >
-                <div className="absolute top-4 left-0 right-0 flex items-center justify-center">
-                  <div className="text-center transform transition-all duration-500 hover:scale-105">
-                    <h3 className="text-sm font-serif font-bold mb-1 transition-colors duration-300" style={{ color: phases.research.color }}>
-                      Research Journey
-                    </h3>
-                    <p className="text-xs opacity-75 transition-colors duration-300" style={{ color: phases.research.color }}>
-                      {phases.research.period}
-                    </p>
+              return (
+                <div
+                  key={phaseId}
+                  className={`absolute inset-y-0 cursor-pointer transition-all duration-700 ease-out hover:scale-[1.01] ${
+                    isActive ? 'opacity-100 shadow-lg' : 'opacity-60 hover:opacity-80'
+                  }`}
+                  style={{
+                    left: phaseLeft,
+                    width: phaseWidth,
+                    backgroundColor: phase.bgColor,
+                    borderLeft: `2px solid ${phase.color}20`,
+                    borderRight: phaseId !== 'college' ? `2px solid ${phase.color}20` : undefined,
+                    transform: isActive ? 'scale(1.01)' : 'scale(1)',
+                    zIndex: isActive ? 5 : 1,
+                  }}
+                  onClick={() => handlePhaseClick(phaseId)}
+                >
+                  <div className="absolute top-4 left-0 right-0 flex items-center justify-center">
+                    <div className="text-center transform transition-all duration-500 hover:scale-105">
+                      <h3 className="text-sm font-serif font-bold mb-1" style={{ color: phase.color }}>
+                        {phase.label}
+                      </h3>
+                      <p className="text-xs opacity-75" style={{ color: phase.color }}>
+                        {phase.period}
+                      </p>
+                    </div>
                   </div>
                 </div>
-              </div>
-            </div>
+              );
+            })}
 
             {/* Winding Path SVG */}
-            <svg className="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 1000 400" preserveAspectRatio="none">
+            <svg
+              id="windingpath"
+              className="absolute inset-0 w-full h-full pointer-events-none"
+              viewBox="0 0 1000 400"
+              preserveAspectRatio="none"
+            >
               <defs>
                 <linearGradient id="pathGradient" x1="0%" y1="0%" x2="100%" y2="0%">
                   <stop offset="0%" stopColor={phases.college.color} stopOpacity="0.5" />
@@ -166,46 +133,54 @@ export const JourneySection = () => {
                   <stop offset="100%" stopColor={phases.research.color} stopOpacity="0.3" />
                 </linearGradient>
                 <filter id="pathGlow">
-                  <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
-                  <feMerge> 
-                    <feMergeNode in="coloredBlur"/>
-                    <feMergeNode in="SourceGraphic"/>
+                  <feGaussianBlur stdDeviation="2" result="coloredBlur" />
+                  <feMerge>
+                    <feMergeNode in="coloredBlur" />
+                    <feMergeNode in="SourceGraphic" />
                   </feMerge>
                 </filter>
               </defs>
-              
-              {/* Winding path adjusted for new proportions */}
-              
-              {/* Bottom boundary line */}
+
+              {/* Base quadratic curve */}
               <path
-                d="M 0 212 Q 120 172 200 192 Q 300 232 400 192 Q 500 152 600 202 Q 700 242 800 212 Q 900 182 1000 212"
+                id="centerCurve"
+                ref={pathRef} 
+                d="M 0 200 Q 120 164 200 180 Q 300 220 400 180 Q 500 140 600 190 Q 700 230 800 200 Q 900 170 1000 200"
+                stroke="none"
+                fill="none"
+              />
+
+              {/* Bottom boundary */}
+              <path
+                d="M 0 206 Q 120 170 200 186 Q 300 226 400 186 Q 500 146 600 196 Q 700 236 800 206 Q 900 176 1000 206"
                 stroke="url(#pathGradient)"
                 strokeWidth="2"
                 fill="none"
                 filter="url(#pathGlow)"
                 className="drop-shadow-sm"
               />
-              
-              {/* Top boundary line */}
+
+              {/* Top boundary */}
               <path
-                d="M 0 188 Q 120 148 200 168 Q 300 208 400 168 Q 500 128 600 178 Q 700 218 800 188 Q 900 158 1000 188"
+                d="M 0 194 Q 120 158 200 174 Q 300 214 400 174 Q 500 134 600 184 Q 700 224 800 194 Q 900 164 1000 194"
                 stroke="url(#pathGradient)"
                 strokeWidth="2"
                 fill="none"
                 filter="url(#pathGlow)"
                 className="drop-shadow-sm"
               />
-              
-              {/* Center path fill */}
+
+              {/* Filled band */}
               <path
-                d="M 0 188 Q 120 148 200 168 Q 300 208 400 168 Q 500 128 600 178 Q 700 218 800 188 Q 900 158 1000 188 L 1000 212 Q 900 182 800 212 Q 700 242 600 202 Q 500 152 400 192 Q 300 232 200 192 Q 120 172 0 212 Z"
+                d="M 0 194 Q 120 158 200 174 Q 300 214 400 174 Q 500 134 600 184 Q 700 224 800 194 Q 900 164 1000 194 
+                   L 1000 206 Q 900 176 800 206 Q 700 236 600 196 Q 500 146 400 186 Q 300 226 200 186 Q 120 170 0 206 Z"
                 fill="url(#pathCenterGradient)"
                 className="drop-shadow-sm"
               />
-              
-              {/* Center dashed line for realism */}
+
+              {/* Dashed center guideline */}
               <path
-                d="M 0 200 Q 120 160 200 180 Q 300 220 400 180 Q 500 140 600 190 Q 700 230 800 200 Q 900 170 1000 200"
+                d="M 0 200 Q 120 164 200 180 Q 300 220 400 180 Q 500 140 600 190 Q 700 230 800 200 Q 900 170 1000 200"
                 stroke="#ffffff"
                 strokeWidth="1"
                 strokeDasharray="8,6"
@@ -215,106 +190,40 @@ export const JourneySection = () => {
               />
             </svg>
 
-            {/* Asian Lantern Milestone Markers */}
-            {milestones.map((milestone, index) => {
-              const xPosition = calculateMilestonePosition(milestone);
-              const baseYPosition = calculatePathYPosition(xPosition);
-              const isAbove = index % 2 === 0;
-              const offset = 35; // Reduced offset to place markers closer to path
-              const yPosition = isAbove 
-                ? Math.max(baseYPosition - offset, 60)
-                : Math.min(baseYPosition + offset, 340);
+            {/* Milestone Markers */}
+            {pathElement &&
+              milestones.map((milestone, globalIndex) => {
+                const positionX = calculateXPosition(milestone);
+                const { x: markerX, y: markerY } = calculateYPosition(pathElement, positionX, globalIndex, 25);
 
-              // Adjust x position based on new proportions
-              let adjustedX;
-              if (milestone.phase === 'college') {
-                adjustedX = (xPosition / 100) * 40; // Map to first 40%
-              } else if (milestone.phase === 'industry') {
-                adjustedX = 40 + ((xPosition - 52) / (87 - 52)) * 40; // Map to middle 40%
-              } else {
-                adjustedX = 80 + ((xPosition - 87) / (100 - 87)) * 20; // Map to last 20%
-              }
-
-              const phaseColors = {
-                college: ['#FF6B6B', '#4ECDC4', '#45B7D1'],
-                industry: ['#FFA726', '#66BB6A', '#AB47BC'],
-                research: ['#8E24AA', '#5C6BC0', '#26A69A']
-              };
-
-              const colors = phaseColors[milestone.phase];
-              const flagColor = colors[index % colors.length];
-
-              return (
-                <div
-                  key={milestone.id}
-                  className="absolute transform -translate-x-1/2 cursor-pointer transition-all duration-500 ease-out hover:scale-110 hover:z-20 pointer-events-auto hover:-translate-y-1"
-                  style={{
-                    left: `${adjustedX}%`,
-                    top: `${(yPosition / 400) * 100}%`,
-                    zIndex: selectedMilestone?.id === milestone.id ? 20 : 10,
-                    transform: isAbove ? 'translateX(-50%) translateY(-100%)' : 'translateX(-50%) translateY(0%)'
-                  }}
-                  onClick={() => handleMilestoneClick(milestone)}
-                >
-                  {/* Asian Lantern Structure */}
-                  <div className="relative group animate-in fade-in duration-700" style={{ animationDelay: `${index * 100}ms` }}>
-
-                    {/* Main Lantern Body */}
-                      {/* Icon inscription */}
-                      <div className="transform transition-all duration-300 group-hover:scale-110">
-                        {/* <MilestoneMarker
-                          key={`icon-${milestone.id}`}
-                          milestone={milestone}
-                          milestoneIndex={index}
-                          selectedMilestone={selectedMilestone}
-                          setSelectedMilestone={() => {}}
-                          renderIconOnly={true}
-                        /> */}
-                      </div>
-                      
-
-                    {/* Hover tooltip with animation */}
-                    <div 
-  className={`absolute left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-all duration-300 ease-out pointer-events-none z-30 ${
-    isAbove ? 'top-full mt-4' : 'bottom-full mb-4'
-  } group-hover:scale-105`}
->
-  <div className="bg-black/90 backdrop-blur-sm text-white text-xs px-3 py-2 rounded-lg whitespace-nowrap max-w-48 text-center shadow-2xl border border-white/10">
-    <div className="font-medium">{milestone.title}</div>
-    <div className="text-[10px] opacity-75 mt-1">{milestone.date}</div>
-    <div 
-      className="text-[10px] px-2 py-0.5 rounded-full mt-1 inline-block"
-      style={{ backgroundColor: eventTypeColors[milestone.type] + '40' }}
-    >
-      {milestone.type}
-    </div>
-  </div>
-                      {/* Enhanced tooltip arrow */}
-  <div className={`absolute left-1/2 transform -translate-x-1/2 ${
-    isAbove ? 'bottom-full' : 'top-full'
-  }`}>
-    <div className={`w-0 h-0 border-l-4 border-r-4 border-transparent ${
-      isAbove ? 'border-b-4 border-b-black/90' : 'border-t-4 border-t-black/90'
-        // Arrow points up toward icon above
-        // Arrow points down toward icon below
-    }`}></div>
-  </div>
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
+                return (
+                  <MilestoneMarker
+                    key={milestone.id}
+                    milestoneIndex={globalIndex}
+                    milestone={milestone}
+                    selectedMilestone={selectedMilestone}
+                    setSelectedMilestone={setSelectedMilestone}
+                    setActivePhase={setActivePhase}
+                    style={{
+                      left: `${(markerX / 1000) * 100}%`,
+                      top: `${(markerY / 400) * 100}%`,
+                      transform: "translate(-50%, -50%)",
+                      zIndex: selectedMilestone?.id === milestone.id ? 25 : 10
+                    }}
+                  />
+                );
+              })}
           </div>
 
           {/* Event Type Legend with enhanced animations */}
-          <div className="flex justify-center mb-6">
-            <div className="flex flex-wrap gap-4 p-4 bg-white/60 backdrop-blur-sm rounded-xl border border-gray-200/50 shadow-sm transition-all duration-500 hover:shadow-lg hover:bg-white/80 hover:scale-[1.02]">
-              {Object.entries(eventTypeColors).map(([type, color], index) => (
+           <div className="flex justify-center mb-6">
+             <div className="flex flex-wrap gap-4 p-4 bg-white/60 backdrop-blur-sm rounded-xl border border-gray-200/50 shadow-sm transition-all duration-500 hover:shadow-lg hover:bg-white/80 hover:scale-[1.02]">
+               {Object.entries(eventTypeColors).map(([type, color], index) => (
                 <div key={type} className="flex items-center gap-2 transition-all duration-500 hover:scale-110 animate-in slide-in-from-bottom-2"
                      style={{ animationDelay: `${index * 100}ms` }}>
-                  <div 
+                  <div
                     className="w-4 h-3 rounded-sm border border-gray-200/50 transition-all duration-500 shadow-sm hover:shadow-md hover:scale-110"
-                    style={{ 
+                    style={{
                       backgroundColor: color,
                       boxShadow: `0 2px 8px ${color}20`
                     }}
@@ -327,114 +236,98 @@ export const JourneySection = () => {
             </div>
           </div>
 
-          {/* Phase Overview */}
-          <Card className="bg-white/60 backdrop-blur-sm border-2 transition-all duration-700 ease-out transform hover:scale-[1.01] shadow-lg hover:shadow-xl" 
-                style={{ 
-                  borderColor: currentPhase.color + '20',
-                  boxShadow: `0 8px 32px ${currentPhase.color}10`
-                }}>
+          {/* Phase Milestones Cards */}
+          <Card className="bg-white/60 backdrop-blur-sm border-2 shadow-lg hover:shadow-xl transition-all duration-500">
             <CardHeader className="pb-3">
-              <CardTitle className="text-2xl font-serif transition-colors duration-500" style={{ color: currentPhase.color }}>
+              <CardTitle className="text-2xl font-serif" style={{ color: currentPhase.color }}>
                 {currentPhase.title}
-                : maybe make cards in list format: like news
               </CardTitle>
-              <p className="text-sm text-gray-500 transition-colors duration-300">{currentPhase.period}</p>
+              <p className="text-sm text-gray-500">{currentPhase.period}</p>
             </CardHeader>
             <CardContent>
-              <p className="text-gray-600 leading-relaxed mb-6 transition-opacity duration-500">
-                {currentPhase.description}
-              </p>
-              
-              {/* Phase Milestones Grid */}
+              <p className="text-gray-600 leading-relaxed mb-6">{currentPhase.description}</p>
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {phaseMilestones.map((milestone, index) => (
-                  <Card 
-                    key={milestone.id}
-                    className={`cursor-pointer transition-all duration-300 ease-out hover:shadow-md hover:scale-[1.02] transform hover:-translate-y-1 bg-white/70 backdrop-blur-sm border ${
-                      selectedMilestone?.id === milestone.id ? 'ring-2 ring-blue-500/50 border-blue-300' : 'border-gray-100/50'
-                    }`}
-                    style={{
-                      transitionDelay: `${index * 50}ms`
-                    }}
-                    onClick={() => setSelectedMilestone(milestone)}
-                  >
-                    <CardContent className="p-4">
-                      <div className="flex items-center gap-3 mb-2">
-                        <div 
-                          className="w-3 h-3 rounded-full transition-all duration-300 shadow-sm"
-                          style={{ 
-                            backgroundColor: eventTypeColors[milestone.type],
-                            boxShadow: `0 0 8px ${eventTypeColors[milestone.type]}30`
+                {phaseMilestones.map((milestone, idx) => {
+                  const isHighlighted = selectedMilestone?.id === milestone.id;
+                  
+                  return (
+                    <Card 
+                      key={milestone.id}
+                      className={`cursor-pointer transition-all duration-500 transform ${
+                        isHighlighted 
+                          ? 'ring-4 ring-blue-500/50 border-blue-400 shadow-xl scale-105 bg-blue-50/50' 
+                          : 'border-gray-100/50 hover:shadow-md hover:scale-[1.02] hover:-translate-y-1'
+                      }`}
+                      onClick={() => handleMilestoneClick(milestone)}
+                    >
+                      <CardContent className="p-4">
+                        <div className="flex items-center gap-3 mb-2">
+                          <div 
+                            className={`w-3 h-3 rounded-full transition-all duration-300 ${
+                              isHighlighted ? 'w-4 h-4 shadow-lg' : ''
+                            }`} 
+                            style={{ 
+                              backgroundColor: eventTypeColors[milestone.type],
+                              boxShadow: isHighlighted ? `0 0 8px ${eventTypeColors[milestone.type]}60` : 'none'
+                            }} 
+                          />
+                          <span className={`font-medium text-sm transition-colors duration-300 ${
+                            isHighlighted ? 'text-blue-700' : 'text-gray-700'
+                          }`}>
+                            {milestone.date}
+                          </span>
+                        </div>
+                        <h4 className={`font-serif font-medium mb-1 text-sm transition-colors duration-300 ${
+                          isHighlighted ? 'text-blue-800' : 'text-gray-800'
+                        }`}>
+                          {milestone.title}
+                        </h4>
+                        <p className={`text-xs line-clamp-2 transition-colors duration-300 ${
+                          isHighlighted ? 'text-blue-600' : 'text-gray-500'
+                        }`}>
+                          {milestone.description}
+                        </p>
+                        <Badge
+                          variant="secondary"
+                          className={`text-xs mt-2 transition-all duration-300 ${
+                            isHighlighted ? 'shadow-md' : ''
+                          }`}
+                          style={{
+                            backgroundColor: isHighlighted 
+                              ? eventTypeColors[milestone.type] + '25' 
+                              : eventTypeColors[milestone.type] + '15',
+                            color: eventTypeColors[milestone.type],
+                            border: `1px solid ${eventTypeColors[milestone.type]}${isHighlighted ? '40' : '20'}`
                           }}
-                        />
-                        <span className="font-medium text-sm text-gray-700 transition-colors duration-300">
-                          {milestone.date}
-                        </span>
-                      </div>
-                      <h4 className="font-serif font-medium mb-1 text-sm text-gray-800 transition-colors duration-300">
-                        {milestone.title}
-                      </h4>
-                      <p className="text-xs text-gray-500 line-clamp-2 transition-colors duration-300">
-                        {milestone.description}
-                      </p>
-                      <Badge 
-                        variant="secondary" 
-                        className="text-xs mt-2 transition-all duration-300 hover:scale-105"
-                        style={{ 
-                          backgroundColor: eventTypeColors[milestone.type] + '15',
-                          color: eventTypeColors[milestone.type],
-                          border: `1px solid ${eventTypeColors[milestone.type]}20`
-                        }}
-                      >
-                        {milestone.type}
-                      </Badge>
-                    </CardContent>
-                  </Card>
-                ))}
+                        >
+                          {milestone.type}
+                        </Badge>
+                      </CardContent>
+                    </Card>
+                  );
+                })}
               </div>
             </CardContent>
           </Card>
         </TabsContent>
 
+
+        {/* ---------------- Resume ---------------- */}
         <TabsContent value="resume">
           <Card className="bg-white shadow-lg">
             <CardContent className="p-8 text-center">
-              {/* <div className="mb-6">
-                <Download className="mx-auto mb-4 text-gray-600" size={48} />
-
-              </div> */}
-
-              <div className="space-y-1">
-                <Button className="w-full max-w-sm" onClick={handleResumeDownload}>
-                  <Download size={10} />
-                  Download Full Resume (PDF)
-                </Button>
-                <div className="text-sm text-gray-600">
-                                  <p className="text-gray-600">
-                  Download a comprehensive PDF version of my professional experience and qualifications.
-                </p>
-                  <p>Last updated: {new Date().toLocaleDateString()}</p>
-                </div>
-              </div>
-
-              {/* Preview sections */}
-              <div className="mt-8 grid md:grid-cols-1 gap-4 text-left">
-                <div    style={{
-          width: '100%',
-          height: '1000px',
-          border: '1px solid #e0e0e0',
-          borderRadius: '0.5rem',
-          overflow: 'hidden', 
-        }}>
-  <iframe
-          src="/test.pdf"
-          width="100%"
-          height="100%"
-          style={{ border: 'none' }}
-          title="Journey PDF"
-        />        
-                </div>
-              </div>
+              <Button className="w-full max-w-sm mb-4" onClick={handleResumeDownload}>
+                <Download size={10} />
+                Download Full Resume (PDF)
+              </Button>
+              <p className="text-sm text-gray-600 mb-4">Last updated: {new Date().toLocaleDateString()}</p>
+              <iframe
+                src="/test.pdf"
+                width="100%"
+                height="1000"
+                className="border rounded-md"
+                title="Resume PDF"
+              />
             </CardContent>
           </Card>
         </TabsContent>

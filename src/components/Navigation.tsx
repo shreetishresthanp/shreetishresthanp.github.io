@@ -54,7 +54,7 @@ export const Navigation = ({
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="ml-3 opacity-60 hover:opacity-100 transition-opacity"
+                  className="ml-3 opacity-60 hover:opacity-100 transition-opacity rounded-none"
                   onClick={(e) => {
                     e.stopPropagation();
                     onPersonalModeToggle();
@@ -72,7 +72,7 @@ export const Navigation = ({
             <Button
               variant="ghost"
               size="sm"
-              className="lg:hidden"
+              className="lg:hidden rounded-none"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             >
               {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
@@ -89,7 +89,7 @@ export const Navigation = ({
               key={id}
               variant={activeSection === id ? "secondary" : "ghost"}
               size="sm"
-              className="justify-between font-sans text-sm tracking-wide w-36"
+              className="justify-between font-sans text-sm tracking-wide w-36 rounded-none"
               onClick={() => {
                 const element = document.getElementById(id);
                 element?.scrollIntoView({ behavior: 'smooth' });
@@ -112,7 +112,7 @@ export const Navigation = ({
                 <Button
                   key={id}
                   variant={activeSection === id ? "secondary" : "ghost"}
-                  className="justify-start font-sans text-sm tracking-wide"
+                  className="justify-start font-sans text-sm tracking-wide rounded-none"
                   onClick={() => {
                     const element = document.getElementById(id);
                     element?.scrollIntoView({ behavior: 'smooth' });

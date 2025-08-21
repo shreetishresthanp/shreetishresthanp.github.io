@@ -12,6 +12,7 @@ export const phases = {
   college: {
     id: 'college',
     title: 'College Years - Foundation Building',
+    label: 'College',
     period: '2018 - 2021',
     color: '#64748b',        // Elegant slate gray-blue
     bgColor: 'rgba(100, 116, 139, 0.08)',
@@ -22,6 +23,7 @@ export const phases = {
   industry: {
     id: 'industry',
     title: 'Industry Experience - Professional Growth',
+    label: 'Industry Experience',
     period: '2022 - 2024',
     color: '#92400e',        // Warm amber-brown
     bgColor: 'rgba(146, 64, 14, 0.08)',
@@ -31,7 +33,8 @@ export const phases = {
   },
   research: {
     id: 'research',
-    title: 'Research Journey - Academic Excellence',
+    title: 'Research Journey - Academic Pursuit',
+    label: 'Research Journey',
     period: '2025 - Present',
     color: '#8b5a8c',        // Soft muted purple
     bgColor: 'rgba(139, 90, 140, 0.08)',
