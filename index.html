@@ -1,25 +1,92 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Shreeti Shrestha</title>
-    <meta name="description" content="A research portfolio blending technical insights with personal reflections" />
-    <meta name="author" content="Research Portfolio" />
-        
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+---
+layout: default
+title: Home
+---
 
-    <meta property="og:title" content="434269c9-673b-4032-beaf-5a6cadcebd36" />
-    <meta property="og:description" content="Lovable Generated Project" />
-    <meta property="og:type" content="website" />
-    <meta property="og:image" content="public/home_icon.jpg" />
- </head>
+<section id="hero" class="min-h-screen flex items-center justify-center relative bg-gradient-subtle paper-texture py-20 px-6 max-w-none slide-up lg:mr-64 lg:ml-8 ml-0 mr-0 mx-auto">
+  <div class="text-justify fade-in w-full">
+    <!-- Main content will be here -->
+  </div>
 
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
-</html>
+  <!-- Introduction & Journey Summary -->
+  <div class="absolute inset-0 flex items-center justify-center pointer-events-none select-none">
+    <div class="w-[90vw] max-w-3xl px-2 md:px-0 text-justify">
+      <h2 class="text-lg md:text-xl font-serif mb-2 font-bold text-foreground text-justify animate-fade-in-up animate-glow" style="animation: fadeInUp 1.2s cubic-bezier(0.23,1,0.32,1) both, glow 2.5s ease-in-out infinite alternate; animation-delay: 0.2s, 0s;">
+        Hello, I am Shreeti
+      </h2>
+      <h2 class="text-xs md:text-sm tracking-widest font-semibold text-accent mb-2 italic text-justify animate-gradient-x bg-gradient-to-r from-accent via-foreground to-accent bg-clip-text text-transparent" style="animation: gradientX 3s ease-in-out infinite alternate;">
+        CURIOSITY DRIVES ME; REFLECTION SHAPES ME
+      </h2>
+      <p class="text-sm md:text-base text-muted-foreground mb-3 animate-fade-in-up text-justify" style="animation-delay: 0.35s; animation-fill-mode: both;">
+        I'm currently deepening my expertise in advanced machine learning techniques at Northeastern University to blend rigorous academic research with practical engineering solutions.
+        My recent work focuses on deep learning models that adapt to complex, non-linear patterns and decision support systems that are both technically sound and human-centered.
+        Prior to this, I worked as a software engineer at Trimble Maps where I specialized in routing and navigation systems.
+      </p>
+      <p class="text-sm md:text-base text-muted-foreground mb-3 animate-fade-in-up animate-underline text-justify" style="animation-delay: 0.35s, 1.2s; animation-fill-mode: both;">
+        Always looking to connect with others who value thoughtful reflection and creative collaboration.
+      </p>
+      <h2 class="text-xs md:text-sm tracking-widest font-semibold text-accent mb-2 italic text-justify animate-gradient-x bg-gradient-to-r from-accent via-foreground to-accent bg-clip-text text-transparent" style="animation: gradientX 3s ease-in-out infinite alternate;">
+        RESEARCH STATEMENT
+      </h2>
+      <p class="text-sm md:text-base text-muted-foreground mb-1 animate-fade-in-up text-justify" style="animation-delay: 0.45s; animation-fill-mode: both;">
+        To what extent can we mimic cognitive processes in neural networks to aid decision-making?
+      </p>
+      <p class="text-sm md:text-base text-muted-foreground mb-1 animate-fade-in-up text-justify" style="animation-delay: 0.5s; animation-fill-mode: both;">
+        How do we effectively scale such computations?
+      </p>
+      <p class="text-sm md:text-base text-muted-foreground mb-3 animate-fade-in-up text-justify" style="animation-delay: 0.55s; animation-fill-mode: both;">
+        How can we ensure data integrity when using such models?
+      </p>
+      <p class="text-sm md:text-base text-muted-foreground mb-3 animate-fade-in-up text-justify" style="animation-delay: 0.6s; animation-fill-mode: both;">
+        My goal lies in learning to integrate neural networks in decision support systems, ensuring we can build models that are robust, scalable, and interpretable.
+      </p>
+    </div>
+  </div>
+  
+  <!-- Scroll indicator -->
+  <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
+    <svg class="w-6 h-6 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+    </svg>
+  </div>
+</section>
+
+<!-- About Section -->
+<section id="about" class="py-20 px-6 max-w-none slide-up lg:mr-64 lg:ml-8 ml-0 mr-0 mx-auto">
+  <div class="text-center mb-6">
+    <h2 class="text-section font-sans">About</h2>
+  </div>
+  <div class="max-w-4xl mx-auto">
+    {% include about.html %}
+  </div>
+</section>
+
+<!-- Journey Section -->
+<section id="journey" class="py-20 px-6 max-w-none slide-up lg:mr-64 lg:ml-8 ml-0 mr-0 mx-auto">
+  <div class="text-center mb-6">
+    <h2 class="text-section font-sans">Timeline</h2>
+  </div>
+  <div class="max-w-6xl mx-auto">
+    {% include timeline.html %}
+  </div>
+</section>
+
+<!-- Projects Section -->
+<section id="projects" class="py-20 px-6 max-w-none slide-up lg:mr-64 lg:ml-8 ml-0 mr-0 mx-auto">
+  <div class="text-center mb-6">
+    <h2 class="text-section font-sans">Projects</h2>
+  </div>
+  <div class="max-w-6xl mx-auto">
+    {% include projects.html %}
+  </div>
+</section>
+
+<!-- Research Section -->
+<section id="research" class="py-20 px-6 max-w-none slide-up lg:mr-64 lg:ml-8 ml-0 mr-0 mx-auto">
+  <div class="text-center mb-6">
+    <h2 class="text-section font-sans">Research</h2>
+  </div>
+  <div class="max-w-6xl mx-auto">
+    {% include research.html %}
+  </div>
+</section>

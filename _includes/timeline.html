@@ -1,0 +1,168 @@
+<!-- Interactive Timeline Component -->
+<div class="timeline-container max-w-6xl mx-auto">
+  <!-- Timeline Navigation Tabs -->
+  <div class="timeline-tabs mb-8">
+    <div class="flex justify-center space-x-1 bg-gray-100 p-1 rounded-lg">
+      {% for phase in site.data.phases %}
+        <button 
+          class="timeline-tab px-6 py-3 rounded-md font-medium transition-all duration-300 {% if forloop.first %}bg-white shadow-sm text-accent{% else %}text-gray-600 hover:text-gray-900{% endif %}"
+          data-phase="{{ phase[0] }}"
+          onclick="switchTimelinePhase('{{ phase[0] }}')"
+        >
+          {{ phase[1].label }}
+        </button>
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- Timeline Path -->
+  <div class="timeline-path-container relative mb-12">
+    <svg class="w-full h-16" viewBox="0 0 1000 64" preserveAspectRatio="none">
+      <defs>
+        <linearGradient id="timelineGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" style="stop-color:hsl(var(--accent));stop-opacity:0.3" />
+          <stop offset="50%" style="stop-color:hsl(var(--accent));stop-opacity:0.6" />
+          <stop offset="100%" style="stop-color:hsl(var(--accent));stop-opacity:0.3" />
+        </linearGradient>
+      </defs>
+      <path 
+        id="timelinePath"
+        d="M 50 32 Q 500 32 950 32" 
+        stroke="url(#timelineGradient)" 
+        stroke-width="2" 
+        fill="none"
+        class="timeline-line"
+      />
+    </svg>
+    
+    <!-- Timeline Nodes -->
+    <div class="timeline-nodes absolute inset-0 flex justify-between items-center">
+      {% for phase in site.data.phases %}
+        <div 
+          class="timeline-node w-10 h-10 rounded-full border-4 border-white shadow-lg cursor-pointer transition-all duration-500 hover:scale-105"
+          style="background-color: {{ phase[1].color }}; left: {{ phase[1].startPercent }}%;"
+          data-phase="{{ phase[0] }}"
+          onclick="switchTimelinePhase('{{ phase[0] }}')"
+        >
+          <div class="w-4 h-4 rounded-full bg-white m-2"></div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- Timeline Content -->
+  <div class="timeline-content">
+    {% for phase in site.data.phases %}
+      <div 
+        class="timeline-phase-content {% unless forloop.first %}hidden{% endunless %}" 
+        id="phase-{{ phase[0] }}"
+      >
+        <div class="text-center mb-8">
+          <h3 class="text-2xl font-serif mb-2">{{ phase[1].title }}</h3>
+          <p class="text-muted-foreground">{{ phase[1].period }}</p>
+        </div>
+
+        <!-- Milestones for this phase -->
+        <div class="space-y-6">
+          {% assign phase_milestones = site.data.milestones | where: "phase", phase[0] %}
+          {% for milestone in phase_milestones %}
+            <div class="milestone-card group bg-card shadow-soft rounded-lg p-6 hover-lift transition-all duration-300">
+              <div class="flex items-center gap-5">
+                <!-- Date with enhanced styling -->
+                <div class="flex flex-col items-center">
+                  <span class="text-xs text-gray-500 font-mono w-16 text-center">
+                    {{ milestone.date }}
+                  </span>
+                  <div class="w-8 h-0.5 mt-1 bg-gray-300 group-hover:bg-gray-400 transition-all duration-300"></div>
+                </div>
+                
+                <!-- Enhanced separator with subtle pulse -->
+                <div class="flex flex-col items-center">
+                  <div class="w-2 h-2 rounded-full bg-gray-400 group-hover:bg-gray-500 group-hover:scale-110 transition-all duration-500"></div>
+                </div>
+                
+                <!-- Title with enhanced typography -->
+                <div class="flex-1">
+                  <div class="flex items-center gap-2 mb-1">
+                    <h4 class="font-semibold text-lg leading-tight text-gray-800 group-hover:text-gray-900 transition-all duration-300">
+                      {{ milestone.title }}
+                    </h4>
+                    {% if milestone.organization %}
+                      <span class="text-xs px-2 py-1 bg-gray-100 text-gray-600 rounded-full font-medium">
+                        {{ milestone.organization }}
+                      </span>
+                    {% endif %}
+                  </div>
+                  {% if milestone.duration %}
+                    <div class="text-xs text-gray-500 font-mono mb-2">
+                      {{ milestone.duration }}
+                    </div>
+                  {% endif %}
+                  {% if milestone.description %}
+                    <p class="text-sm leading-relaxed text-gray-600 group-hover:text-gray-700 transition-colors duration-300">
+                      {{ milestone.description }}
+                    </p>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+
+  <!-- Resume Download Section -->
+  <div class="mt-16 bg-gradient-subtle rounded-lg p-8 text-center">
+    <h3 class="text-2xl font-serif mb-4">Download Resume</h3>
+    <p class="text-muted-foreground mb-6">View my complete professional journey and qualifications</p>
+    <div class="bg-white rounded-lg shadow-inner border border-gray-200 overflow-hidden max-w-4xl mx-auto">
+      <iframe
+        src="/test.pdf"
+        width="100%"
+        height="1000"
+        class="border-0 bg-white"
+        title="Resume PDF"
+      ></iframe>
+    </div>
+  </div>
+</div>
+
+<script>
+// Timeline functionality
+function switchTimelinePhase(phaseId) {
+  // Update tab states
+  document.querySelectorAll('.timeline-tab').forEach(tab => {
+    tab.classList.remove('bg-white', 'shadow-sm', 'text-accent');
+    tab.classList.add('text-gray-600');
+  });
+  
+  const activeTab = document.querySelector(`[data-phase="${phaseId}"]`);
+  activeTab.classList.add('bg-white', 'shadow-sm', 'text-accent');
+  activeTab.classList.remove('text-gray-600');
+
+  // Update content visibility
+  document.querySelectorAll('.timeline-phase-content').forEach(content => {
+    content.classList.add('hidden');
+  });
+  
+  const activeContent = document.getElementById(`phase-${phaseId}`);
+  activeContent.classList.remove('hidden');
+
+  // Update node states
+  document.querySelectorAll('.timeline-node').forEach(node => {
+    node.classList.remove('scale-110', 'shadow-lg');
+    node.classList.add('scale-100');
+  });
+  
+  const activeNode = document.querySelector(`.timeline-node[data-phase="${phaseId}"]`);
+  activeNode.classList.add('scale-110', 'shadow-lg');
+  activeNode.classList.remove('scale-100');
+}
+
+// Initialize timeline
+document.addEventListener('DOMContentLoaded', function() {
+  // Set default active phase (research)
+  switchTimelinePhase('research');
+});
+</script>

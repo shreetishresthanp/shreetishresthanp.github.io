@@ -1,0 +1,26 @@
+- title: Adaptive Tutoring Assistant - LLM-Powered Learning vs. Traditional Methods
+  research_question: How does an AI-powered tutoring assistant affect overall learning, engagement, and user experience compared to traditional textbook-based study?
+  description: |
+    Developed an LSAT tutor prototype using Gemini API and Streamlit. Conducted an A/B testing pilot with an AI tutor (experimental group) versus textbook-based learning (control group). 
+    Collected pre/post quiz scores and survey feedback to explore benefits and user experience, without aiming for definitive conclusions.
+  status: Completed
+  tags:
+    - LLMs
+    - Education
+    - Human-Centered NLP
+  type: research
+  learn_more: /pdfs/AdaptiveTutoringAssistant.pdf
+
+- title: Usability Testing Study Design for Health Information Chatbots
+  research_question: How do source citations influence user trust and usability in health information chatbots?
+  description: |
+    Designed a split-plot study with quantitative metrics (System Usability Scale, Credibility Perception Scale, interaction patterns) 
+    and qualitative thematic analysis of debrief responses to assess trust cues, perceived safety, and clarity.
+  status: Completed
+  tags:
+    - Usability
+    - Human-Centered NLP
+    - Healthcare AI
+    - AI Ethics
+  type: research
+  learn_more: /pdfs/UsabilityStudyDesign.pdf

@@ -1,0 +1,32 @@
+college:
+  id: college
+  title: College Years - Foundation Building
+  label: College
+  period: 2018 - 2021
+  color: "#64748b"
+  bgColor: "rgba(100, 116, 139, 0.08)"
+  description: Building technical foundations while developing leadership and mentoring skills through diverse campus involvement.
+  startPercent: 0
+  endPercent: 52
+
+industry:
+  id: industry
+  title: Industry Experience - Professional Growth
+  label: Industry Experience
+  period: 2022 - 2024
+  color: "#92400e"
+  bgColor: "rgba(146, 64, 14, 0.08)"
+  description: Rapid professional development from entry-level to senior engineer, consistently exceeding expectations and driving innovation.
+  startPercent: 52
+  endPercent: 87
+
+research:
+  id: research
+  title: Research Journey - Academic Pursuit
+  label: Research Journey
+  period: 2025 - Present
+  color: "#8b5a8c"
+  bgColor: "rgba(139, 90, 140, 0.08)"
+  description: Transitioning to research-focused career, contributing to cutting-edge developments in machine learning and AI.
+  startPercent: 87
+  endPercent: 100

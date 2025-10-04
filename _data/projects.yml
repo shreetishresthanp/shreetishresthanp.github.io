@@ -1,0 +1,28 @@
+- title: Adaptive Tutoring Assistant
+  description: |
+    Developed an LLM-powered LSAT tutoring prototype using Streamlit with Firebase backend, leveraging the Gemini API for real-time dialogue-based instruction. 
+    Conducted A/B testing comparing AI tutor interactions with textbook-based learning, integrating pre/post quizzes and user surveys to assess critical thinking outcomes.
+  technologies:
+    - Python
+    - Streamlit
+    - Firebase
+    - Gemini API
+  status: Completed
+  category: AI Application
+  links:
+    github: https://github.com/shreetishresthanp/adaptive_tutoring_assistant
+    demo: https://huggingface.co/spaces/LSATAdaptiveTutor/chatbot_tutor
+
+- title: Medical Summaries Evaluation Pipeline
+  description: |
+    RQ: How readable and semantically accurate are NLP-generated medical summaries? 
+    Built an NLP evaluation pipeline combining automated metrics (ROUGE, BLEU, BERTScore, Flesch-Kincaid) with human feedback surveys. Generated 150 plain-language summaries of medical abstracts and automated result analysis to assess readability and semantic quality.
+  technologies:
+    - Python
+    - Transformers
+    - Hugging Face
+  status: Completed
+  category: NLP Evaluation
+  links:
+    github: https://github.com/shreetishresthanp/medical_summaries_evaluation
+    paper: /pdfs/EvaluatingMedicalSummaries.pdf
