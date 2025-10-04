@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Navigation } from './Navigation';
 import { HeroSection } from './sections/HeroSection';
-import { AboutSection } from './sections/AboutSection';
+// import { AboutSection } from './sections/AboutSection';
 import { JourneySection } from './sections/JourneySection';
 import { ResearchSection } from './sections/ResearchSection';
 import { ProjectsSection } from './sections/ProjectsSection';
@@ -44,7 +44,7 @@ export const Portfolio = () => {
   const professionalSections = (
     <>
       <HeroSection onNavigate={handleSectionChange} isPersonalMode={isPersonalMode} />
-      <AboutSection />
+      {/* <AboutSection /> */}
       <JourneySection />
       <ResearchSection />
       <ProjectsSection />
@@ -79,7 +79,7 @@ export const Portfolio = () => {
       <footer className="py-8 px-6 border-t border-border bg-muted/30 section-content">
         <div className="max-w-6xl mx-auto text-center">
           <p className="text-sm text-muted-foreground">
-           Developed with Lovable & Third.js • Built with care • {new Date().getFullYear()}
+           Developed with Lovable & Third.js • {new Date().getFullYear()}
           </p>
         </div>
       </footer>

@@ -60,7 +60,7 @@ export const WritingSection = () => {
   };
 
   return (
-    <section id="writing" className="py-20 px-6 max-w-6xl mx-auto slide-up">
+    <section id="writing" className="py-20 px-6 max-w-none slide-up lg:mr-64 lg:ml-8 ml-0 mr-0 mx-auto">
       <div className="text-center mb-16">
         <h2 className="text-section mb-4 font-serif">Writing</h2>
         <p className="text-body text-muted-foreground max-w-2xl mx-auto">

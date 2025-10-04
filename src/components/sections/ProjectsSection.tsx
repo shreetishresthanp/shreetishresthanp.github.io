@@ -21,7 +21,7 @@ export const ProjectsSection = () => {
     },
     {
       title: "Medical Summaries Evaluation Pipeline",
-      description: `Built an NLP evaluation pipeline combining automated metrics (ROUGE, BLEU, BERTScore, Flesch-Kincaid) with human feedback surveys. Generated 150 plain-language summaries of medical abstracts and automated result analysis to assess readability and semantic quality.`  ,
+      description: `RQ: How readable and semantically accurate are NLP-generated medical summaries? \n Built an NLP evaluation pipeline combining automated metrics (ROUGE, BLEU, BERTScore, Flesch-Kincaid) with human feedback surveys. Generated 150 plain-language summaries of medical abstracts and automated result analysis to assess readability and semantic quality.`  ,
       technologies: ["Python", "Transformers", "Hugging Face"],
       status: "Completed",
       category: "NLP Evaluation",
@@ -47,7 +47,7 @@ export const ProjectsSection = () => {
 
   const getStatusColor = (status: string): "default" | "secondary" | "outline" => {
     const statusColors: Record<string, "default" | "secondary" | "outline"> = {
-      "Completed": "default",
+      "Completed": "secondary",
       "Beta Testing": "secondary",
       "Published": "outline",
       "Under Review": "secondary"
@@ -56,12 +56,9 @@ export const ProjectsSection = () => {
   };
 
   return (
-    <section id="projects" className="py-20 px-6 max-w-6xl mx-auto slide-up">
+    <section id="projects" className="py-20 px-6 max-w-none slide-up lg:mr-64 lg:ml-8 ml-0 mr-0 mx-auto">
       <div className="text-center mb-16">
-        <h2 className="text-section mb-4 font-serif">Projects</h2>
-        <p className="text-body text-muted-foreground max-w-2xl mx-auto">
-          Building tools and frameworks that bridge research insights with practical applications
-        </p>
+        <h2 className="text-section font-sans">Projects</h2>
       </div>
 
       <div className="grid md:grid-cols-2 gap-8">
@@ -134,20 +131,6 @@ export const ProjectsSection = () => {
         })}
       </div>
 
-      {/* Development Philosophy */}
-      <div className="mt-16 max-w-3xl mx-auto">
-        <Card className="bg-gradient-subtle shadow-soft">
-          <CardContent className="p-8 text-center">
-            <Code className="mx-auto mb-4 text-accent" size={32} />
-            <h3 className="text-xl font-serif mb-4">Development Philosophy</h3>
-            <p className="text-body text-muted-foreground leading-relaxed">
-              I believe in building tools that are not just functional, but thoughtful. 
-              Every project is an opportunity to bridge the gap between research insights and real-world impact, 
-              always keeping human needs and ethical considerations at the center.
-            </p>
-          </CardContent>
-        </Card>
-      </div>
     </section>
   );
 };

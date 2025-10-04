@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Download } from 'lucide-react';
+import { Download, Star, Trophy, Briefcase, Users, Award } from 'lucide-react';
 
 // Import data and utilities
 import { milestones, phases, eventTypeColors } from '../../lib/milestones';
@@ -15,11 +15,23 @@ import {
   getMilestonesByPhase
 } from '../../lib/journeyUtils';
 
+// Icon mapping for milestone types
+const getMilestoneIcon = (type: string) => {
+  const iconMap = {
+    milestone: Star,
+    achievement: Trophy,
+    experience: Briefcase,
+    mentorship: Users,
+    leadership: Award
+  };
+  return iconMap[type as keyof typeof iconMap] || Star;
+};
+
 import { MilestoneMarker } from '../../lib/MilestoneMarker';
 import { useRef, useEffect } from "react";
 
 export const JourneySection = () => {
-  const [activePhase, setActivePhase] = useState('college');
+  const [activePhase, setActivePhase] = useState('research');
   const [selectedMilestone, setSelectedMilestone] = useState(null);
 
   const currentPhase = phases[activePhase];
@@ -54,12 +66,9 @@ export const JourneySection = () => {
   };
 
   return (
-    <section id="journey" className="py-20 px-6 max-w-6xl mx-auto slide-up">
+    <section id="journey" className="py-20 px-6 max-w-none slide-up lg:mr-64 lg:ml-8 ml-0 mr-0 mx-auto">
       <div className="text-center mb-16">
-        <h2 className="text-4xl font-bold mb-4 font-serif">Professional Journey</h2>
-        <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-          From curiosity to research expertise — a path of continuous learning and growth. 
-          </p>
+        <h2 className="text-section font-sans">Professional Journey</h2>
         <p className="text-lg text-gray-600 max-w-2xl mx-auto">
           While journeys are seldom linear, here's a look at key phases that shaped my path.
         </p>
@@ -67,248 +76,206 @@ export const JourneySection = () => {
 
       <Tabs defaultValue="interactive" className="w-full">
         <TabsList className="grid w-full grid-cols-2 mb-8">
-          <TabsTrigger value="interactive">Interactive Timeline</TabsTrigger>
+          <TabsTrigger value="interactive">Timeline</TabsTrigger>
           <TabsTrigger value="resume">Download Resume</TabsTrigger>
         </TabsList>
 
         {/* ---------------- Interactive Timeline ---------------- */}
         <TabsContent value="interactive" className="space-y-8">
-          <div className="relative w-full h-96 bg-gradient-to-b from-slate-50/50 to-transparent rounded-xl overflow-hidden border">
-
-            {/* Phase Backgrounds */}
-            {Object.entries(phases).map(([phaseId, phase], idx) => {
-              const phaseWidth = phaseId === 'college' ? '45%' : phaseId === 'industry' ? '40%' : '40%';
-              const phaseLeft = phaseId === 'college' ? '0%' : phaseId === 'industry' ? '35%' : '65%';
+          {/* Visual Timeline */}
+          <div className="relative">
+            {/* Timeline Line - More subtle */}
+            <div className="absolute top-6 left-0 right-0 h-px bg-gradient-to-r from-slate-300 via-amber-400 to-purple-400 opacity-60"></div>
+            
+            {/* Timeline Phases */}
+            <div className="flex justify-between items-start">
+              {Object.entries(phases).map(([phaseId, phase], index) => {
               const isActive = activePhase === phaseId;
+                const phaseMilestones = getMilestonesByPhase(milestones, phaseId);
 
               return (
                 <div
                   key={phaseId}
-                  className={`absolute inset-y-0 cursor-pointer transition-all duration-700 ease-out hover:scale-[1.01] ${
-                    isActive ? 'opacity-100 shadow-lg' : 'opacity-60 hover:opacity-80'
+                    className={`relative cursor-pointer transition-all duration-500 flex flex-col items-center ${
+                      isActive ? 'scale-102' : 'hover:scale-101'
+                    }`}
+                    onClick={() => handlePhaseClick(phaseId)}
+                    style={{ width: '30%' }}
+                  >
+                    {/* Timeline Node - Smaller concentric circles */}
+                    <div className="relative z-10 mb-3">
+                      <div 
+                        className={`w-10 h-10 rounded-full border-2 transition-all duration-500 flex items-center justify-center ${
+                          isActive ? 'scale-105 shadow-md' : 'hover:scale-102'
                   }`}
                   style={{
-                    left: phaseLeft,
-                    width: phaseWidth,
-                    backgroundColor: phase.bgColor,
-                    borderLeft: `2px solid ${phase.color}20`,
-                    borderRight: phaseId !== 'college' ? `2px solid ${phase.color}20` : undefined,
-                    transform: isActive ? 'scale(1.01)' : 'scale(1)',
-                    zIndex: isActive ? 5 : 1,
-                  }}
-                  onClick={() => handlePhaseClick(phaseId)}
-                >
-                  <div className="absolute top-4 left-0 right-0 flex items-center justify-center">
-                    <div className="text-center transform transition-all duration-500 hover:scale-105">
-                      <h3 className="text-sm font-serif font-bold mb-1" style={{ color: phase.color }}>
-                        {phase.label}
+                          backgroundColor: isActive ? phase.color : 'white',
+                          borderColor: phase.color,
+                          boxShadow: isActive ? `0 0 12px ${phase.color}30` : 'none'
+                        }}
+                      >
+                        <div 
+                          className="w-4 h-4 rounded-full transition-all duration-500"
+                          style={{ 
+                            backgroundColor: isActive ? 'white' : phase.color,
+                            opacity: isActive ? 1 : 0.7
+                          }}
+                        />
+                      </div>
+                      {/* Subtle outer ring for engagement */}
+                      {isActive && (
+                        <div 
+                          className="absolute inset-0 w-10 h-10 rounded-full border border-opacity-30 animate-pulse"
+                          style={{ borderColor: phase.color }}
+                        />
+                      )}
+                    </div>
+                    
+                    {/* Phase Content - Simplified */}
+                    <div className="text-center">
+                      <div className="mb-2">
+                        <h3 
+                          className="text-base font-serif font-medium mb-1 transition-colors duration-300"
+                          style={{ color: isActive ? phase.color : '#6b7280' }}
+                        >
+                          {phase.title}
                       </h3>
-                      <p className="text-xs opacity-75" style={{ color: phase.color }}>
+                        <span 
+                          className="text-xs px-2 py-0.5 rounded-full font-medium transition-all duration-300"
+                          style={{ 
+                            backgroundColor: isActive ? phase.color : '#f3f4f6',
+                            color: isActive ? 'white' : '#6b7280'
+                          }}
+                        >
                         {phase.period}
-                      </p>
+                        </span>
+                      </div>
+                      
+                      {/* Minimal milestones indicator */}
+                      <div className="flex flex-col items-center gap-1 text-xs text-gray-400">
+                        <div className="flex gap-0.5">
+                          {Array.from({ length: Math.min(phaseMilestones.length, 3) }).map((_, i) => (
+                            <div
+                              key={i}
+                              className="w-1 h-1 rounded-full transition-all duration-300"
+                              style={{ 
+                                backgroundColor: isActive ? phase.color + '80' : phase.color + '40'
+                              }}
+                            />
+                          ))}
+                          {phaseMilestones.length > 3 && (
+                            <span className="text-xs opacity-60">+{phaseMilestones.length - 3}</span>
+                          )}
+                        </div>
+                      </div>
                     </div>
                   </div>
-                </div>
-              );
-            })}
-
-            {/* Winding Path SVG */}
-            <svg
-              id="windingpath"
-              className="absolute inset-0 w-full h-full pointer-events-none"
-              viewBox="0 0 1000 400"
-              preserveAspectRatio="none"
-            >
-              <defs>
-                <linearGradient id="pathGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                  <stop offset="0%" stopColor={phases.college.color} stopOpacity="0.5" />
-                  <stop offset="40%" stopColor={phases.industry.color} stopOpacity="0.5" />
-                  <stop offset="80%" stopColor={phases.research.color} stopOpacity="0.5" />
-                  <stop offset="100%" stopColor={phases.research.color} stopOpacity="0.5" />
-                </linearGradient>
-                <linearGradient id="pathCenterGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                  <stop offset="0%" stopColor={phases.college.color} stopOpacity="0.3" />
-                  <stop offset="40%" stopColor={phases.industry.color} stopOpacity="0.3" />
-                  <stop offset="80%" stopColor={phases.research.color} stopOpacity="0.3" />
-                  <stop offset="100%" stopColor={phases.research.color} stopOpacity="0.3" />
-                </linearGradient>
-                <filter id="pathGlow">
-                  <feGaussianBlur stdDeviation="2" result="coloredBlur" />
-                  <feMerge>
-                    <feMergeNode in="coloredBlur" />
-                    <feMergeNode in="SourceGraphic" />
-                  </feMerge>
-                </filter>
-              </defs>
-
-              {/* Base quadratic curve */}
-              <path
-                id="centerCurve"
-                ref={pathRef} 
-                d="M 0 200 Q 120 164 200 180 Q 300 220 400 180 Q 500 140 600 190 Q 700 230 800 200 Q 900 170 1000 200"
-                stroke="none"
-                fill="none"
-              />
-
-              {/* Bottom boundary */}
-              <path
-                d="M 0 206 Q 120 170 200 186 Q 300 226 400 186 Q 500 146 600 196 Q 700 236 800 206 Q 900 176 1000 206"
-                stroke="url(#pathGradient)"
-                strokeWidth="2"
-                fill="none"
-                filter="url(#pathGlow)"
-                className="drop-shadow-sm"
-              />
-
-              {/* Top boundary */}
-              <path
-                d="M 0 194 Q 120 158 200 174 Q 300 214 400 174 Q 500 134 600 184 Q 700 224 800 194 Q 900 164 1000 194"
-                stroke="url(#pathGradient)"
-                strokeWidth="2"
-                fill="none"
-                filter="url(#pathGlow)"
-                className="drop-shadow-sm"
-              />
-
-              {/* Filled band */}
-              <path
-                d="M 0 194 Q 120 158 200 174 Q 300 214 400 174 Q 500 134 600 184 Q 700 224 800 194 Q 900 164 1000 194 
-                   L 1000 206 Q 900 176 800 206 Q 700 236 600 196 Q 500 146 400 186 Q 300 226 200 186 Q 120 170 0 206 Z"
-                fill="url(#pathCenterGradient)"
-                className="drop-shadow-sm"
-              />
-
-              {/* Dashed center guideline */}
-              <path
-                d="M 0 200 Q 120 164 200 180 Q 300 220 400 180 Q 500 140 600 190 Q 700 230 800 200 Q 900 170 1000 200"
-                stroke="#ffffff"
-                strokeWidth="1"
-                strokeDasharray="8,6"
-                fill="none"
-                opacity="0.4"
-                className="drop-shadow-sm"
-              />
-            </svg>
-
-            {/* Milestone Markers */}
-            {pathElement &&
-              milestones.map((milestone, globalIndex) => {
-                const positionX = calculateXPosition(milestone);
-                const { x: markerX, y: markerY } = calculateYPosition(pathElement, positionX, globalIndex, 25);
-
-                return (
-                  <MilestoneMarker
-                    key={milestone.id}
-                    milestoneIndex={globalIndex}
-                    milestone={milestone}
-                    selectedMilestone={selectedMilestone}
-                    setSelectedMilestone={setSelectedMilestone}
-                    setActivePhase={setActivePhase}
-                    style={{
-                      left: `${(markerX / 1000) * 100}%`,
-                      top: `${(markerY / 400) * 100}%`,
-                      transform: "translate(-50%, -50%)",
-                      zIndex: selectedMilestone?.id === milestone.id ? 25 : 10
-                    }}
-                  />
                 );
               })}
-          </div>
-
-          {/* Event Type Legend with enhanced animations */}
-           <div className="flex justify-center mb-6">
-             <div className="flex flex-wrap gap-4 p-4 bg-white/60 backdrop-blur-sm rounded-xl border border-gray-200/50 shadow-sm transition-all duration-500 hover:shadow-lg hover:bg-white/80 hover:scale-[1.02]">
-               {Object.entries(eventTypeColors).map(([type, color], index) => (
-                <div key={type} className="flex items-center gap-2 transition-all duration-500 hover:scale-110 animate-in slide-in-from-bottom-2"
-                     style={{ animationDelay: `${index * 100}ms` }}>
-                  <div
-                    className="w-4 h-3 rounded-sm border border-gray-200/50 transition-all duration-500 shadow-sm hover:shadow-md hover:scale-110"
-                    style={{
-                      backgroundColor: color,
-                      boxShadow: `0 2px 8px ${color}20`
-                    }}
-                  />
-                  <span className="text-sm font-medium capitalize text-gray-700 transition-colors duration-500 hover:text-gray-900 hover:font-semibold">
-                    {type}
-                  </span>
-                </div>
-              ))}
             </div>
           </div>
 
-          {/* Phase Milestones Cards */}
-          <Card className="bg-white/60 backdrop-blur-sm border-2 shadow-lg hover:shadow-xl transition-all duration-500">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-2xl font-serif" style={{ color: currentPhase.color }}>
+
+          {/* Phase Milestones - Minimal Horizontal Layout */}
+          <div className="bg-white/60 backdrop-blur-sm border border-gray-200 rounded-lg p-6 transition-all duration-500 hover:bg-white/70">
+            <div className="mb-6">
+              <h3 className="text-xl font-serif font-semibold mb-1" style={{ color: currentPhase.color }}>
                 {currentPhase.title}
-              </CardTitle>
-              <p className="text-sm text-gray-500">{currentPhase.period}</p>
-            </CardHeader>
-            <CardContent>
-              <p className="text-gray-600 leading-relaxed mb-6">{currentPhase.description}</p>
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+              </h3>
+              <p className="text-sm text-gray-500 mb-3">{currentPhase.period}</p>
+              <p className="text-gray-600 text-sm leading-relaxed">{currentPhase.description}</p>
+            </div>
+            
+            {/* Enhanced Visual List with subtle animations */}
+            <div className="space-y-2">
                 {phaseMilestones.map((milestone, idx) => {
                   const isHighlighted = selectedMilestone?.id === milestone.id;
                   
                   return (
-                    <Card 
+                  <div
                       key={milestone.id}
-                      className={`cursor-pointer transition-all duration-500 transform ${
+                    className={`group cursor-pointer transition-all duration-500 py-3 px-4 rounded-lg border ${
                         isHighlighted 
-                          ? 'ring-4 ring-blue-500/50 border-blue-400 shadow-xl scale-105 bg-blue-50/50' 
-                          : 'border-gray-100/50 hover:shadow-md hover:scale-[1.02] hover:-translate-y-1'
+                        ? 'bg-gradient-to-r from-warm-cream to-warm-beige border-accent shadow-sm transform scale-[1.02]' 
+                        : 'bg-white/30 border-gray-200 hover:bg-gradient-to-r hover:from-gray-50 hover:to-gray-100 hover:border-gray-300 hover:shadow-sm hover:scale-[1.01]'
                       }`}
                       onClick={() => handleMilestoneClick(milestone)}
+                      style={{
+                        animationDelay: `${idx * 50}ms`
+                      }}
                     >
-                      <CardContent className="p-4">
-                        <div className="flex items-center gap-3 mb-2">
-                          <div 
-                            className={`w-3 h-3 rounded-full transition-all duration-300 ${
-                              isHighlighted ? 'w-4 h-4 shadow-lg' : ''
-                            }`} 
-                            style={{ 
-                              backgroundColor: eventTypeColors[milestone.type],
-                              boxShadow: isHighlighted ? `0 0 8px ${eventTypeColors[milestone.type]}60` : 'none'
-                            }} 
-                          />
-                          <span className={`font-medium text-sm transition-colors duration-300 ${
-                            isHighlighted ? 'text-blue-700' : 'text-gray-700'
-                          }`}>
+                    <div className="flex items-center gap-5">
+                      {/* Date with enhanced styling */}
+                      <div className="flex flex-col items-center">
+                        <span className="text-xs text-gray-500 font-mono w-16 text-center">
                             {milestone.date}
                           </span>
+                        <div className={`w-8 h-0.5 mt-1 transition-all duration-300 ${
+                          isHighlighted ? 'bg-accent' : 'bg-gray-300 group-hover:bg-gray-400'
+                        }`} />
+                      </div>
+                      
+                      {/* Enhanced separator with subtle pulse */}
+                      <div className="flex flex-col items-center">
+                        <div className={`w-2 h-2 rounded-full transition-all duration-500 ${
+                          isHighlighted ? 'bg-accent animate-pulse' : 'bg-gray-400 group-hover:bg-gray-500 group-hover:scale-110'
+                        }`} />
                         </div>
-                        <h4 className={`font-serif font-medium mb-1 text-sm transition-colors duration-300 ${
-                          isHighlighted ? 'text-blue-800' : 'text-gray-800'
-                        }`}>
-                          {milestone.title}
-                        </h4>
-                        <p className={`text-xs line-clamp-2 transition-colors duration-300 ${
-                          isHighlighted ? 'text-blue-600' : 'text-gray-500'
+                      
+                      {/* Title with enhanced typography */}
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2 mb-1">
+                          <h4 className={`font-semibold text-lg leading-tight transition-all duration-300 ${
+                            isHighlighted ? 'text-accent' : 'text-gray-800 group-hover:text-gray-900'
+                          }`}>
+                            {milestone.title}
+                          </h4>
+                          {milestone.organization && (
+                            <span className="text-xs px-2 py-1 bg-gray-100 text-gray-600 rounded-full font-medium">
+                              {milestone.organization}
+                            </span>
+                          )}
+                        </div>
+                        {milestone.duration && (
+                          <div className="text-xs text-gray-500 font-mono mb-2">
+                            {milestone.duration}
+                          </div>
+                        )}
+                        {milestone.description && (
+                          <p className={`text-sm leading-relaxed transition-colors duration-300 ${
+                            isHighlighted ? 'text-muted-foreground' : 'text-gray-600 group-hover:text-gray-700'
                         }`}>
                           {milestone.description}
                         </p>
-                        <Badge
-                          variant="secondary"
-                          className={`text-xs mt-2 transition-all duration-300 ${
-                            isHighlighted ? 'shadow-md' : ''
-                          }`}
-                          style={{
-                            backgroundColor: isHighlighted 
-                              ? eventTypeColors[milestone.type] + '25' 
-                              : eventTypeColors[milestone.type] + '15',
-                            color: eventTypeColors[milestone.type],
-                            border: `1px solid ${eventTypeColors[milestone.type]}${isHighlighted ? '40' : '20'}`
-                          }}
-                        >
+                        )}
+                      </div>
+                      
+                      {/* Enhanced type indicator */}
+                      <div className="flex flex-col items-center gap-2">
+                        {(() => {
+                          const IconComponent = getMilestoneIcon(milestone.type);
+                          return (
+                            <div className={`p-2 rounded-lg transition-all duration-300 ${
+                              isHighlighted 
+                                ? 'bg-accent/10 text-accent' 
+                                : 'bg-gray-100 text-gray-500 group-hover:bg-gray-200 group-hover:text-gray-600'
+                            }`}>
+                              <IconComponent className="w-5 h-5" />
+                            </div>
+                          );
+                        })()}
+                        <span className={`text-xs font-medium capitalize transition-colors duration-300 ${
+                          isHighlighted ? 'text-accent' : 'text-gray-500 group-hover:text-gray-600'
+                        }`}>
                           {milestone.type}
-                        </Badge>
-                      </CardContent>
-                    </Card>
+                        </span>
+                      </div>
+                    </div>
+                  </div>
                   );
                 })}
               </div>
-            </CardContent>
-          </Card>
+          </div>
         </TabsContent>
 
 

@@ -125,10 +125,18 @@ export function calculateYPosition(
 
 
 /**
- * Get milestones for a specific phase
+ * Get milestones for a specific phase, sorted from latest to oldest
  */
 export const getMilestonesByPhase = (milestones, phaseId) => {
-  return milestones.filter(milestone => milestone.phase === phaseId);
+  const phaseMilestones = milestones.filter(milestone => milestone.phase === phaseId);
+  
+  // Sort by date in descending order (latest to oldest)
+  return phaseMilestones.sort((a, b) => {
+    // Convert date strings to comparable format
+    const dateA = new Date(a.date);
+    const dateB = new Date(b.date);
+    return dateB.getTime() - dateA.getTime(); // Descending order
+  });
 };
 
 /**

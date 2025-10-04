@@ -47,34 +47,37 @@ export const phases = {
 export const milestones = [
   { 
     id: 'college-start', 
-    title: 'Started College Journey', 
+    title: 'Started at Ramapo College of New Jersey', 
     date: 'Aug 2018', 
     phase: 'college', 
     type: 'milestone', 
-    description: 'Began Computer Science studies, diving into the world of programming and technology.' 
+    description: 'Majored in Computer Science.' 
   },
   { 
     id: 'csi-award', 
-    title: 'New Staff of the Year - CSI', 
+    title: 'New Staff of the Year - Center for Student Involvement', 
     date: 'May 2020', 
     phase: 'college', 
     type: 'achievement', 
-    description: 'Recognized for outstanding contribution in campus job at Computer Science Initiative.' 
+    organization: 'Ramapo College of New Jersey',
+    description: 'Recognized for outstanding contribution as a Student Staff Manager.' 
   },
   { 
     id: 'google-mentor', 
-    title: 'Google CSSI Mentor', 
+    title: 'Mentor - Google Computer Science Summer Institute', 
     date: 'July 2020', 
     phase: 'college', 
     type: 'mentorship', 
-    description: 'Guided underrepresented students in Computer Science Summer Institute program.' 
+    organization: 'Google',
+    description: 'Guided incoming freshmen in Data Structures and Algorithms.' 
   },
   { 
     id: 'tutor-start', 
-    title: 'CS Tutor Position', 
+    title: 'Peer Tutor for Computer Science', 
     date: 'Aug 2020', 
     phase: 'college', 
     type: 'mentorship', 
+    organization: 'Ramapo College of New Jersey',
     description: 'Helped fellow students master programming concepts and debugging skills.' 
   },
   { 
@@ -83,23 +86,18 @@ export const milestones = [
     date: 'Sept 2020', 
     phase: 'college', 
     type: 'leadership', 
+    organization: 'Ramapo College of New Jersey',
     description: 'Represented student body in university academic governance and policy discussions.' 
   },
   { 
     id: 'iqvia-intern', 
-    title: 'IQVIA Internship', 
+    title: 'Data Analytics Internship - IQVIA', 
     date: 'May 2021', 
+    duration: 'May 2021 - Dec 2021',
     phase: 'college', 
     type: 'experience', 
+    organization: 'IQVIA',
     description: 'Gained industry experience in healthcare technology and data analytics.' 
-  },
-  { 
-    id: 'tutor-end', 
-    title: 'Completed CS Tutoring', 
-    date: 'Dec 2021', 
-    phase: 'college', 
-    type: 'mentorship', 
-    description: 'Finished tutoring role, having helped dozens of students succeed in CS courses.' 
   },
   { 
     id: 'graduation', 
@@ -107,23 +105,24 @@ export const milestones = [
     date: 'Dec 2021', 
     phase: 'college', 
     type: 'milestone', 
-    description: 'Completed Computer Science degree with strong technical foundation and leadership experience.' 
+    description: 'Graduated with magna cum laude in BSc. in Computer Science.' 
   },
   { 
     id: 'fulltime-start', 
-    title: 'Started Full-Time Career', 
+    title: 'Started as a Full-Time Software Engineer at Trimble Maps', 
     date: 'Jan 2022', 
     phase: 'industry', 
     type: 'milestone', 
-    description: 'Transitioned from student to professional software engineer, ready to make an impact.' 
+    description: 'Transitioned to a full-time professional software engineer in navigation development for commercial delivery.' 
   },
   { 
     id: 'q3-mvp', 
     title: 'Q3 MVP Award', 
     date: 'Dec 2022', 
     phase: 'industry', 
+    organization: 'Trimble Maps',
     type: 'achievement', 
-    description: 'Recognized as Most Valuable Player for exceptional contributions to team goals and product delivery.' 
+    description: 'Recognized as Most Valuable Player for exceptional contributions to team goals and product delivery within first year.' 
   },
   { 
     id: 'promotion', 
@@ -131,7 +130,19 @@ export const milestones = [
     date: 'Feb 2023', 
     phase: 'industry', 
     type: 'milestone', 
-    description: 'Advanced to Senior Software Engineer role, taking on greater technical leadership responsibilities.' 
+    organization: 'Trimble Maps',
+    duration: 'Feb 2023 - Dec 2024',
+    description: 'Promoted to Software Engineer II, taking on greater technical responsibilities and contributing to architectural decisions.' 
+  },
+  { 
+    id: 'mentoring', 
+    title: 'Mentoring New Engineers', 
+    date: 'Mar 2023', 
+    phase: 'industry', 
+    type: 'mentorship', 
+    organization: 'Trimble Maps',
+    duration: 'Mar 2023 - Dec 2024',
+    description: 'Led onboarding and mentoring initiatives for data analysts, providing guidance on data engineering best practices and technical implementation.' 
   },
   { 
     id: 'hackathon', 
@@ -139,7 +150,8 @@ export const milestones = [
     date: 'Oct 2023', 
     phase: 'industry', 
     type: 'achievement', 
-    description: 'Placed in top 20 out of hundreds of participants, showcasing innovation and rapid prototyping skills.' 
+    organization: 'Trimble Maps',
+    description: 'Secured a spot in top 20 submissions across 1000+ participants in a global hackathon, demonstrating innovation and rapid prototyping capabilities.' 
   },
   { 
     id: 'left-fulltime', 
@@ -147,23 +159,24 @@ export const milestones = [
     date: 'Dec 2024', 
     phase: 'industry', 
     type: 'milestone', 
-    description: 'Made strategic decision to leave industry and pursue graduate research, driven by passion for advancing the field.' 
+    description: 'Strategic decision to leave industry and pursue graduate research, driven by passion for advancing the field.' 
   },
   { 
     id: 'grad-start', 
-    title: 'Started Graduate School', 
+    title: 'Started Masters at Northeastern University', 
     date: 'Jan 2025', 
     phase: 'research', 
     type: 'milestone', 
-    description: 'Began advanced studies in Computer Science with focus on AI and machine learning research.' 
+    description: 'Began Masters in Computer Science with focus on AI and machine learning research.' 
   },
   { 
     id: 'ra-position', 
-    title: 'Research Assistant Position', 
+    title: 'Research Assistant at UbiWell Lab', 
     date: 'Aug 2025', 
     phase: 'research', 
     type: 'experience', 
-    description: 'Leading evaluation frameworks for large language models and contributing to academic publications.' 
+    organization: 'Northeastern University',
+    description: 'Working on evaluation frameworks for utilization of passive sensing data using ML and LLMs contributing to academic publications.' 
   }
 ];
 
