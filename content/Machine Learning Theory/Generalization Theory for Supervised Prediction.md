@@ -1,0 +1,317 @@
+---
+title: Generalization Theory for Supervised Prediction
+draft: false
+tags:
+  -
+---
+###### Big Picture for Generalization Theory
+We want to prove that the generalization gap is low. Specifically, with high probability, the test loss and training loss of the model is close.
+
+###### PAC Learning 
+**Probably Approximately Correct**: 
+- We're okay with a small probability of failure
+- Just within $\epsilon$
+- Our hypothesis is nearly optimal
+- An algorithm PAC learns a hypothesis class H, if:
+	- access to training data from some unknown distribution $P^*$
+	- Desired accuracy: $\epsilon$
+	- Desired confidence: $1-\delta$
+- After seeing n training examples, the algorithm outputs $\hat{h}$ s.t.:
+	- $\Pr[L(\hat{h}) - \min_{h \in \mathcal{H}} L(h) \leq \varepsilon] \geq 1 - \delta$
+- Intuitively, it means:
+	- Give me ε and δ, and I'll tell you how much data you need. If you give me that data, I **guarantee** with confidence 1−δ that my model will be within ε of the best possible.
+
+#### 2.1 Learning a finite, realizable hypothesis class
+- Simplest possible case
+- **2 strong assumptions**
+	- **Finite hypotheses class**: 
+		- We only have a finite $|H|$ possible models to choose from (say 100)
+	- **Realizable**:
+		- There exists a perfect hypothesis, $h^*$ in our class of models (one of the 100 models is perfect i.e. achieves 0 test loss)
+##### To Prove
+- With probability $1-\delta$, $$L(\hat{h}_{\text{ERM}}) \leq \frac{\log(|H|) + \log(\delta^{-1})}{n}$$
+- Specifically, if we want test loss below $\epsilon$ , we need $$n \geq \frac{\log|H| + \log(1/\delta)}{\varepsilon}$$ training samples.
+- If |H| = 100 models → need ~log(100) ≈ 4.6
+- If |H| = 1,000,000 models → need ~log(1,000,000) ≈ 13.8
+- Since this grows logarithmically, even with a million models to choose from, we need only slightly more data.
+###### Proof Strategy
+1. Define bad hypothesis as models with test loss $> \epsilon$
+	- Let $B\subseteq H$ be the set of bad hypothesis: $B = \{h \in \mathcal{H} : L(h) > \varepsilon\}$
+2. Reframe the problem
+	- Goal is to bound $\Pr[L(\hat{h}_{\text{ERM}}) > \varepsilon]$ , which means: $\Pr[\hat{h}_{\text{ERM}} \in B]$ (probability that we picked a bad hypothesis)
+	- Show: probability that one bad hypothesis looks good on training data 
+	- When does ERM pick a bad hypothesis?
+		- When training loss is 0 for that hypothesis
+		- Because $h^*$ exists and is perfect (so has zero training loss). So ERM will minimize to 0.
+		- $\Pr[\hat{h}_{\text{ERM}} \in B] \leq \Pr[\exists h \in B : \hat{L}(h) = 0]$
+		- $\Pr[\text{ERM picks bad hypothesis}] \leq \Pr[\text{at least one bad hypothesis has zero training loss}]$
+3. Bound the probability for one bad hypothesis
+	- If we pick any single bad hypothesis, what's the probability it fools us again by getting 0 training loss?
+	- This hypothesis test has loss $L(h) > \varepsilon$
+	- So on a random sample, it makes an error with probability  $\gt \epsilon$, which means it's correct with probability $\lt 1-\epsilon$
+	- Probability that $h$ gets all training examples (n independent samples) correct is: $$\Pr[\hat{L}(h) = 0] \leq (1 - \varepsilon)^n$$
+		- So, probability decays exponentially with n
+		- If $\epsilon = 0.1$ and $n=100$, $(1 − 0.1)^100 = 0.9^100 ≈ 0.000027$
+		- So a bad hypothesis is very unlikely to fool us on 100 examples
+		
+4. Union bound (to handle all the bad hypotheses together)
+	- By union bound, for events $A_1, A_2, ..., A_k$, $$\Pr[A_1 \text{ OR } A_2 \text{ OR } \ldots \text{ OR } A_k] \leq \Pr[A_1] + \Pr[A_2] + \ldots + \Pr[A_k]$$
+	- The probability that at least one thing happens is at most the sum of their individual probabilities.
+	- So now, $$\begin{align*}
+\Pr[\exists h \in B : \hat{L}(h) = 0] &\leq \sum_{h \in B} \Pr[\hat{L}(h) = 0] \\
+&\leq \sum_{h \in B} (1 - \varepsilon)^n \\
+&\leq |B| \cdot (1 - \varepsilon)^n \\
+&\leq |H| \cdot (1 - \varepsilon)^n
+\end{align*}$$
+	- since B is a subset of H, it has to be less than the set H. So, $$\Pr[L(\hat{h}_{\text{ERM}}) > \varepsilon] \leq |H| \cdot (1 - \varepsilon)^n$$
+5. Set the bound equal to $\delta$ and solve it
+	- $$\Pr[L(\hat{h}_{\text{ERM}}) > \varepsilon] \leq |H| \cdot (1 - \varepsilon)^n$$
+	- $$\begin{align*}
+|H| \cdot (1 - \varepsilon)^n &\leq \delta \\
+\text{Divide both sides by } |H|: \\
+(1 - \varepsilon)^n &\leq \frac{\delta}{|H|} \\
+\text{Take natural log of both sides:} \\
+n \cdot \ln(1 - \varepsilon) &\leq \ln\left(\frac{\delta}{|H|}\right) \\
+n \cdot \ln(1 - \varepsilon) &\leq \ln(\delta) - \ln(|H|) \\
+\text{Use the inequality } \ln(1 - \varepsilon) \leq -\varepsilon \text{ (true for } \varepsilon \in (0,1)): \\
+n \cdot (-\varepsilon) &\leq \ln(\delta) - \ln(|H|) \\
+-n\varepsilon &\leq -\ln(|H|) + \ln(\delta) \\
+\text{Multiply by } -1 \text{ (flips inequality):} \\
+n\varepsilon &\geq \ln(|H|) - \ln(\delta) \\
+n\varepsilon &\geq \ln(|H|) + \ln(1/\delta) \\
+\text{Divide by } n: \\
+\varepsilon &\geq \frac{\ln(|H|) + \ln(1/\delta)}{n} \\
+\text{using log or natural log is the same} \\
+\varepsilon \geq \frac{\log(|H|) + \log(1/\delta)}{n}
+\end{align*} \\
+$$
+- $$L(\hat{h}_{\text{ERM}}) \leq \frac{\log(|H|) + \log(1/\delta)}{n}$$
+- $$\text{To guarantee } L(\hat{h}_{\text{ERM}}) \leq \varepsilon \text{ with confidence } 1 - \delta, \text{ we need:} \\
+n \geq \frac{\log(|H|) + \log(1/\delta)}{\varepsilon}$$
+
+
+###### Result
+- logarithmic in $|H|$: can handle exponentially large hypotheses classes
+- linear in $\frac{1}{\epsilon}$: 2x more accuracy? needs 2x more data
+- logarithmic in $\frac{1}{\delta}$:10x more confidence? needs only a little bit more data 
+
+There exists a perfect hypothesis (realizability). What happens when the problem is not realizable? To answer this, we introduce the tools of concentration estimates.
+###### Overarching theme
+- Step 1 (convergence): for a fixed h, show that Lˆ(h) is close to L(h) with high probability. 
+- Step 2 (uniform convergence): show that the above holds simultaneously for all hypotheses h ∈ H.
+
+#### Concentration estimates
+Concentration inequalities tell us: when you average many independent random samples, the result tightly concentrates around the expected value
+###### Example 2.3 Mean Estimation
+- $\mu$: True mean (what we want to know), expected value (average we'd get if we could sample infinitely many times)
+- $\hat{\mu}$: Empirical mean, sample mean (average of samples we actually have)
+- Let $X_1, X_2, ..., X_n$ be n i.i.d random variables with mean $\mu$.
+- $$\hat{\mu}_n = \frac{1}{n} \sum_{i=1}^{n} X_i$$
+- How close is $\hat{\mu}_n \text{ to } \mu$?
+###### 3 types of statements
+- **Consistency**: By law of large numbers, as n goes to infinity, empirical mean is closer to true mean (difference approaches 0). Not helpful because doesn't tell us how fast the convergence is or with what probability
+- **Asymptotic Normality** (Central Limit Theorem): $\sqrt{n}(\hat{\mu}_n - \mu) \sim \mathcal{N}(0, \sigma^2)$. Useful for large n, but still asymptotic.
+- **Tail Estimates** (what we want): $\Pr[|\hat{\mu}_n - \mu| \geq \varepsilon] \leq \delta$. Finite sample guarantees; works for any n.
+	- **Markov's inequality** - Very basic, very loose
+	- **Chebyshev's inequality** - Uses variance, tighter
+	- **Hoeffding's inequality** - Uses boundedness, much tighter
+	- **Sub-Gaussian random variables** - Generalizes Hoeffding
+
+#### Markov's Inequality
+Weakest
+Setup:
+ - Z is a non-negative r.v. $Z \geq 0$
+ - $\Pr[Z \geq t] \leq \frac{\mathbb{E}[Z]}{t}$
+ - The probability that Z is way above average is at most average/threshold
+###### Proof
+- Since Z is non-negative, for any threshold t, $t \cdot \mathbb{1}_{\{Z \geq t\}} \leq Z$
+- this is the indicator function: $$\mathbb{1}_{\{Z \geq t\}} = \begin{cases}
+1 & \text{if } Z \geq t \\
+0 & \text{if } Z < t
+\end{cases}$$
+
+- If $Z \geq t$, left = $t$, right = $Z$
+- If $Z \lt t$, left = 0, right = $Z$
+- $$\begin{align*}
+\mathbb{E}[t \cdot \mathbb{1}_{\{Z \geq t\}}] &\leq \mathbb{E}[Z] && \text{(take expectation)} \\
+t \cdot \mathbb{E}[\mathbb{1}_{\{Z \geq t\}}] &\leq \mathbb{E}[Z] && \text{(} t \text{ is constant)} \\
+t \cdot \Pr[Z \geq t] &\leq \mathbb{E}[Z] && \text{(indicator = probability)} \\
+\Pr[Z \geq t] &\leq \frac{\mathbb{E}[Z]}{t} && \text{(divide by } t)
+\end{align*}$$
+#### Chebyshev's Inequality
+Uses variance (tells us about spread and not just mean)
+Setup: 
+- X is a r.v. with mean $\mu$ and variance $Var[X]$
+- $\Pr[|X - \mu| \geq \varepsilon] \leq \frac{\text{Var}[X]}{\varepsilon^2}$ (Probability of deviating by ε is at most variance/$ε^2$)
+
+###### Proof
+- Let $Z = (X − μ)²$. Note Z ≥ 0, so we can use Markov:
+- $$\begin{align*}
+\Pr[|X - \mu| \geq \varepsilon] &= \Pr[(X - \mu)^2 \geq \varepsilon^2] \\
+&= \Pr[Z \geq \varepsilon^2] \\
+&\leq \frac{\mathbb{E}[Z]}{\varepsilon^2} && \text{(Markov)} \\
+&= \frac{\mathbb{E}[(X - \mu)^2]}{\varepsilon^2}  && \text{(Var[X] = E[(X − μ)²])} \\
+&= \frac{\text{Var}[X]}{\varepsilon^2}
+\end{align*}$$
+
+
+
+#### Hoeffding's Inequality
+Setup
+- Let $Z_1, Z_2, ..., Z_n$ be n independent random variables with mean, $E[Z_i] = \mu$ for all i
+- Each $Z_i \in [0,1]$ 
+- Let the empirical mean be: $\hat{\mu}_n = \frac{1}{n} \sum_{i=1}^n Z_i$
+- The, for any $\epsilon \in [0,1]$, we have: $$\Pr[|\hat{\mu}_n - \mu| > \varepsilon] \leq 2 \cdot \exp(-2\varepsilon^2 n)$$
+- While Chebyshev's is polynomial decay ($\frac{1}{\epsilon^2}$), this is exponential decay, which is much faster (as n grows)
+- Proof uses Moment Generating Functions (MGF)
+
+##### What are MGFs?
+For a random variable X, its MGF is: $M_X(t) := \mathbb{E}[e^{tX}]$
+- Taylor expansion: approximates complicated functions using simpler polynomial pieces
+- Using Taylor's expansion for the exponent: $$\begin{align*}
+e^{tX} &= 1 + tX + \frac{(tX)^2}{2} + \frac{(tX)^3}{6} + \cdots \\
+&= 1 + tX + \frac{t^2 X^2}{2} + \frac{t^3 X^3}{6} + \cdots
+\end{align*}$$
+$$\begin{align*}
+M_X(t) &= \mathbb{E}\left[1 + tX + \frac{t^2}{2}X^2 + \cdots\right] \\
+&= 1 + t \cdot \mathbb{E}[X] + \frac{t^2}{2} \cdot \mathbb{E}[X^2] + \frac{t^3}{6} \cdot \mathbb{E}[X^3] + \cdots
+\end{align*}$$
+- The coefficients contain all the moments: mean, variance (assuming mean is 0), third moment ...
+- The MGF of the sum of two independent random variables X and Y is the product of the MGF of X and Y.
+###### Key Properties of MGF
+**1. MGF of Independent Sum**
+- If X and Y are independent, $M_{X+Y}(t) = M_X(t) \cdot M_Y(t)$
+- $$\begin{align*}
+M_{X+Y}(t) &= \mathbb{E}[e^{t(X+Y)}] \\
+&= \mathbb{E}[e^{tX} \cdot e^{tY}] \\
+&= \mathbb{E}[e^{tX}] \cdot \mathbb{E}[e^{tY}] && \text{(independence!)} \\
+&= M_X(t) \cdot M_Y(t)
+\end{align*}$$
+**2. Markov on the MGF**
+- For any $t \gt 0$, $$\begin{align*}
+\Pr[X \geq a] &= \Pr[e^{tX} \geq e^{ta}] && \text{(exponentiate both sides)} \\
+&\leq \frac{\mathbb{E}[e^{tX}]}{e^{ta}} && \text{(Markov's inequality!)} \\
+&= \frac{M_X(t)}{e^{ta}} && \text{(definition of MGF)}
+\end{align*}$$
+- So, we can choose the best t to minimize this bound: $$\Pr[X \geq a] \leq \min_{t > 0} \frac{M_X(t)}{e^{ta}}$$
+##### Heoffding's Proof (using MGF)
+1. Rewrite in terms of sum
+	- $\text{Let } S = \sum_{i=1}^n Z_i \text{ (the sum). Then } \hat{\mu}_n = \frac{S}{n} \text{ and } n\mu = \mathbb{E}[S].$
+	- $$ \begin{align*}
+\Pr[\hat{\mu}_n - \mu > \varepsilon] &= \Pr[S - n\mu > n\varepsilon] \\
+&= \Pr[S > n\mu + n\varepsilon]
+\end{align*}$$
+2. Apply Markov trick to MGF 
+	- For any $t \gt 0$
+	- $$\begin{align*}
+\Pr[S > n\mu + n\varepsilon] &\leq \frac{\mathbb{E}[e^{tS}]}{e^{t(n\mu + n\varepsilon)}} \\
+&= \frac{M_S(t)}{e^{t(n\mu + n\varepsilon)}}
+\end{align*}$$
+
+3. Use independence
+	- Since $Z_i$ are independent,
+	- $$\begin{align*}
+M_S(t) &= M_{Z_1 + Z_2 + \cdots + Z_n}(t) \\
+&= M_{Z_1}(t) \cdot M_{Z_2}(t) \cdot \ldots \cdot M_{Z_n}(t) \\
+&= [M_Z(t)]^n && \text{(if all } Z_i \text{ have same distribution)}
+\end{align*}$$
+
+4. Bound the MGF of one variable
+	- Here's where we use that Zᵢ ∈ [0,1]. For any bounded variable in [0,1] with mean μ:
+	- **Key Lemma**: $M_Z(t) \leq e^{\mu t + t^2/8}$
+5. Plug everything together
+	- $$\begin{align*}
+\Pr[S > n\mu + n\varepsilon] &\leq \frac{[e^{\mu t + t^2/8}]^n}{e^{t(n\mu + n\varepsilon)}} \\
+&= \frac{e^{n\mu t + nt^2/8}}{e^{tn\mu + tn\varepsilon}} \\
+&= e^{nt^2/8 - tn\varepsilon}
+\end{align*}$$
+6. Optimize over t
+	- We want to minimize e^(nt²/8 − tnε). Take derivative with respect to t:
+		- $\frac{d}{dt}\left[\frac{nt^2}{8} - tn\varepsilon\right] = \frac{nt}{4} - n\varepsilon = 0$
+		- $t = 4\epsilon$
+	- $$\begin{align*}
+e^{n(4\varepsilon)^2/8 - 4\varepsilon \cdot n\varepsilon} &= e^{n \cdot 16\varepsilon^2/8 - 4n\varepsilon^2} \\
+&= e^{2n\varepsilon^2 - 4n\varepsilon^2} \\
+&= e^{-2n\varepsilon^2}
+\end{align*}$$
+7. Handle both tails
+	- We just bounded $Pr[μ̂ₙ − μ > ε]$. By symmetry, $Pr[μ̂ₙ − μ < −ε] ≤ e^{(−2nε²)}$ too.
+	- $Pr[|μ̂ₙ − μ| > ε] ≤ 2·e^{(−2nε²)}$
+
+###### Why the Key Lemma Is True
+
+**Claim:** For Z ∈ [0,1] with mean μ, M_Z(t) ≤ e^(μt + t²/8)
+
+Any bounded random variable has an MGF that grows at most like a Gaussian's MGF (which is e^(μt + σ²t²/2)). The bound t²/8 comes from the worst-case variance for a [0,1] variable, which is 1/4.
+
+The full proof uses convexity and is in the notes (Example 2.9). The key insight: boundedness limits how much the tails of the distribution can contribute.
+
+#### 2.8 Sub-Gaussian Random Variables
+- The MGF of a standard Gaussian variable $X \sim N(0,\sigma^2)$is : $M_X(t) = \mathbb{E}[e^{tX}] = e^{\sigma^2 t^2/2}$
+- This gives us the tail bound: $\Pr[X \geq \varepsilon] \leq \exp\left(-\frac{\varepsilon^2}{2\sigma^2}\right)$
+###### What if X is not Gaussian but still has similar concentration properties?
+- A mean-zero random variable X is sub-Gaussian with parameter $\sigma^2$ if X's MGF is bounded by a Gaussian's MGF: $M_X(t) \leq e^{\sigma^2 t^2/2}$
+- If X is sub-Gaussian, we automatically get the Gaussian tail bound (If X is sub-Gaussian (we don't need to know the exact distribution of X or what $\sigma^2$ is), it still obeys the same exponential tail bound as a Gaussian).
+- $$\begin{align*}
+\Pr[X \geq \varepsilon] &\leq \min_t \frac{M_X(t)}{e^{t\varepsilon}} \\
+&\leq \min_t \frac{e^{\sigma^2 t^2/2}}{e^{t\varepsilon}} \\
+&= \exp\left(-\frac{\varepsilon^2}{2\sigma^2}\right)
+\end{align*}$$
+- The minimum is achieved at $t = ε/σ²$, same calculation as before
+
+##### Example 2.9 Bounded variables are Sub-Gaussian
+- Any bounded random variable is sub Gaussian
+- If X ∈ [a, b] with mean μ, then X is sub-Gaussian with parameter σ² = (b−a)²/4.
+- Why (b−a)²/4? Variance bound. For any X, $\text{Var}[X] \leq \frac{(b-a)^2}{4}$
+	- This is the maximum spread. The worst case happens when X takes values only at two extreme ends $a$ and $b$ with equal probability.
+- Loss functions in ML are typically bounded
+	- Classification loss $\in [0,1]$
+	- Regression loss $\in [0,c]$ for some constant $c$
+	- So, when we compute training loss, $\hat{L}(h) = \frac{1}{n} \sum_{i=1}^n \ell(h(x_i), y_i)$, each loss term $l(h(x_{i}), y_{i})$ is a bounded random variable, **which means it's sub-Gaussian**.
+##### Proving ERM Generalization
+- For a fixed hypothesis $h$, we wanted to show: $|L(h) - \hat{L}(h)| \text{ is small with high probability}$
+- So now, we have:
+	- each loss term $l(h(x_{i}), y_{i})$ is a bounded random variable, hence sub-Gaussian
+	- $L(\hat{h})$ is the average of n independent sub-Gaussian variables
+	- By Hoeffding-style bounds, $L(\hat{h})$ concentrates around $L(h)$
+- Flow:
+	- ${\text{Sub-Gaussian}}\to \text{MGF bounded by} e^{(σ²t²/2)} \to \text{Exponential tail bounds} \to \text{Training loss concentrates around test loss}$
+
+#### 2.3 Using uniform convergence to reason about generalization
+- **Convergence**: For a fixed h, show that $L(\hat{h})$ is close to $L(h)$
+- **Uniform convergence**: show this holds simultaneously for all $h \in H$
+- **Excess Risk**: How much worse is our learned model compared to the best model possible in $H$? => $L(\hat{h}_{\text{ERM}}) - L(h^\star)$
+- $$\begin{align*}
+L(\hat{h}_{\text{ERM}}) - L(h^\star) &= \underbrace{L(\hat{h}_{\text{ERM}}) - \hat{L}(\hat{h}_{\text{ERM}})}_{\text{Generalization gap (Part 1)} (\text{uniform convergence})} \\
+&\quad + \underbrace{\hat{L}(\hat{h}_{\text{ERM}}) - \hat{L}(h^\star)}_{\text{Optimization term (Part 2)} (\le 0)} \\
+&\quad + \underbrace{\hat{L}(h^\star) - L(h^\star)}_{\text{Concentration (Part 3)}}
+\end{align*}$$
+- **Part 1**: Test loss minus training loss of the model we picked. Problem: $\hat{h}_{ERM}$ depends on the training data so we can't directly apply concentration
+- **Part 2**: How well did ERM do at minimizing training loss? This is $\le 0$ because, $\hat{L}(\hat{h}_{\text{ERM}}) \leq \hat{L}(h) \quad \forall h \in \mathcal{H}$ ($\hat{h}_{\text{ERM}} = \arg\min_{h \in \mathcal{H}} \hat{L}(h)$)
+	- $\hat{L}(\hat{h}_{ERM}) \le \hat{L}(h^*)$, so this term is non-positive!
+- **Part 3**: Training loss vs test loss of the best hypothesis
+	- $h^*$ is now fixed and doesn't depend on training data
+	- So we can use concentration (Hoeffding's or Gaussian bounds), with high probability
+		- $|\hat{L}(h^\star) - L(h^\star)| \leq O(1/\sqrt{n})$
+	$$\begin{align*}
+L(\hat{h}_{\text{ERM}}) - L(h^\star) &= [L(\hat{h}_{\text{ERM}}) - \hat{L}(\hat{h}_{\text{ERM}})] \\
+&\quad + [\hat{L}(\hat{h}_{\text{ERM}}) - \hat{L}(h^\star)] && \leq 0 \; \checkmark \\
+&\quad + [\hat{L}(h^\star) - L(h^\star)] && \leq O(1/\sqrt{n}) \; \checkmark \\
+L(\hat{h}_{\text{ERM}}) - L(h^\star) \leq \left[L(\hat{h}_{\text{ERM}}) - \hat{L}(\hat{h}_{\text{ERM}})\right] + O(1/\sqrt{n}) 
+\end{align*}$$
+- The remaining challenge becomes to bound part 1
+- Solution: uniform convergence
+	- If we can show that for all $h \in H$, $|L(h) - \hat{L}(h)| \leq \varepsilon/2$, this automatically applies to $\hat{h}_{\text{ERM}}$ since that is in $H$
+- Goal: $$\Pr[L(\hat{h}_{\text{ERM}}) - L(h^\star) \geq \varepsilon] \leq \Pr\left[\sup_{h \in \mathcal{H}} |L(h) - \hat{L}(h)| \geq \varepsilon/2\right]$$
+- Probability that excess risk is large (left hand side) is bounded by probability that the **worst-case generalization gap** over ALL hypotheses is large (right hand side)
+##### Defining the supremum
+- largest positive gap (test loss > training loss): $G_n$
+- largest negative gap (training loss > test loss): $G^{'}_n$
+- $$\begin{align*}
+G_n &= \sup_{h \in \mathcal{H}} [L(h) - \hat{L}(h)] \\
+G'_n &= \sup_{h \in \mathcal{H}} [\hat{L}(h) - L(h)]
+\end{align*}$$
+$$\begin{align*}
+\sup_{h \in \mathcal{H}} |L(h) - \hat{L}(h)| &= \max(G_n, G'_n) \\
+\Pr\left[\sup_{h \in \mathcal{H}} |L(h) - \hat{L}(h)| \geq \varepsilon/2\right] &\leq \Pr[G_n \geq \varepsilon/2] + \Pr[G'_n \geq \varepsilon/2]
+\end{align*}$$

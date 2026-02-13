@@ -1,0 +1,150 @@
+---
+title: Generalization Gap & Transfer Learning
+draft: false
+tags:
+  -
+---
+#### 1.2 Supervised Prediction
+##### Training Loss
+Measures how well the model does on training data (think of labelled data for spam detection)
+Also known as empirical loss
+##### Test Loss
+Measures how well the model does on test, unseen data (think of new unseen data without labels for spam detection)
+Also known as expected loss
+##### Why can't we directly minimize the test loss instead?
+Because we haven't seen that new data, we need a baseline. So we first train it on existing data to compute a loss and see how that compares when testing on unseen data.
+##### Problem
+- We can only compute training loss
+- We care about test loss
+- We hope they're similar, but don't know for sure. Here lies the **generalization gap.**
+
+$$
+\hat{L}(h): \text{average loss on training data} : \frac{1}{n} \sum \text{(losses on each training example)}
+$$
+$$
+L(h): \text{average loss on test (future possible) data} : E(loss) : \text{expected value or average across all possibilities}
+$$
+
+##### What can we say about the relationship between test and training loss?
+i.e. When we pick the hypothesis, h,  that minimizes training loss (also called **empirical loss minimization**), how confident are we that it also has low test loss?
+##### Empirical Risk Minimization (ERM)
+Pick the hypothesis that does best on training data, and hope for the best.
+ERM is risky because then, there's chances that the model is overfitting (has learnt patterns in the training data and is fitting to those patterns, so it performs poorly in new data).
+##### How do we mathematically guarantee this won't happen?
+**Can we bound the generalization gap?**
+- We want to prove something like: with high confidence, the difference between the 2 losses is at most some small number $\epsilon$.
+- **If we can prove this, we're showing that the model generalizes well.**
+- $$\Pr\left[L(h) - \hat{L}(h) > \epsilon\right] \leq 1 - \delta$$
+- where $1 - \delta$ (confidence level) says the probability that the gap exceeds $\epsilon$ is $1 - \delta$ at most.
+- What should the generalization bound depend on?
+	- The size of possible hypotheses (H)
+	- The amount of training data (n)
+	- **Both**
+- If the possible hypotheses are a haystack, and the best one is our needle, we want to make ample attempts (i.e. train on as much data).
+- So, the generalization gap depends on the ratio of:
+	- complexity of H (how many ways can you overfit)
+	- amount of n (how many different patterns can you learn/evidence)
+	- $$\text{Gap} \propto \frac{\text{complexity}(\mathcal{H})}{n}$$
+	- **If we have more n, then the gap is smaller. If we have complex H, the gap is larger.**
+	- *Think of complex H as having hypothesis that is a high degree polynomial that fits to each point of training data perfectly as opposed to a straight line that might underfit.*
+	- This is why "get more data" is often the best advice in ML - it directly attacks the generalization problem.
+
+#### 1.3 Multi-layer neural networks and generative models
+- How does this apply to neural networks that have much more complex hypotheses than linear models?
+
+###### A 2-layer NN
+ $$f(x) = \sum_{i=1}^{m} a_i \cdot \sigma(w_i^T x + b_i)$$
+- **Layer 1 (Hidden Layer)**: takes input x, computes different linear combinations for each neuron $(w_i^T x + b_i)$, applies activation function to each $\sigma$
+- **Layer 2 (Output Layer)**: takes the values and combines them with weights, $a_i$.
+- All these parameters, $\alpha = (\text{all the } a_i\text{'s, } w_i\text{'s, } b_i\text{'s})$ define which specific $f(x)$ function we get.
+- By varying these training parameters $\alpha$, we define the hypothesis class as:
+	- $\mathcal{H} = \{f_\alpha : \forall \alpha \in \mathbb{Z}\}$
+- *More neurons -> more trainable param combinations -> more complex hypothesis class -> bigger generalization gap (for the same amount of data)*
+- This is why neural networks are **notorious for overfitting** when there isn't enough data (a network with millions of trainable params can easily memorize the training set).
+###### Role of activation function
+- Common choices:
+	- Sigmoid (smooth S curve from 0 to 1)
+	- ReLU (outputs z if positive, 0 otherwise)
+- Without the activation functions ($\sigma$), it'd just be a linear function
+- The activation function **adds non-linearity** which allows the model to learn complex non-linear patterns.
+###### Extension to Deep Networks
+- Extend the previous NN to L layers (layers stacking on top of each other)
+	- $f_\alpha(x) = \sigma_L (W_L \sigma_{L-1} (\cdots \sigma_2 (W_2 \sigma_1 (W_1 x + b_1) + b_2) \cdots))$
+	- **Depth** = number of layers = L
+	- **Width** = maximum number of neurons in any single layer = the layer with the most neurons
+###### How well does a deep network generalize? And how does it depend on its depth and width?
+The natural intuition? If either of the 2 (depth or width) is increased, the hypothesis class becomes more complex and so, the generalization gap increases. But deep learning is **weird**.
+
+Modern NNs have extremely complex H (billions of parameters) and can achieve perfect memorization, so a 100% training accuracy. **But they still generalize well to test data.**
+
+###### Why?
+- Active line of research
+- Some theories:
+	- **Implicit regularization**: somehow naturally avoids bad solutions even though they exist in the H class
+	- **Overparameterization helps**: Having excessive parameters might make optimization better and help generalization
+	- **Structure matters**: Not all complex H are equal. Some might be well structured (learns grammar rules, vocab and so on) and so generalize well.
+
+
+#### Transfer Learning and Minimax Estimation
+- Addresses a practical problem. 
+###### What if you don't have enough data for your actual task?
+- If we're training a model from scratch and have only 100 examples, there's massive overfitting.
+- So we want to use knowledge from a related task where we have lots of data
+- **Source Task (A)**: has 100,000 examples
+- **Targe Task(B)**: has only 100 examples
+###### Can Task A's data help us learn Task B better?
+###### Setup
+- 2 Linear Regression tasks
+- **Source Task**: $y^{(1)} = x^{(1)T} \beta^{(1)} + \text{noise}$ ($n_1$ samples, learns $\beta^{(1)}$)
+- **Target Task:** $y^{(2)} = x^{(2)T} \beta^{(2)} + \text{noise}$ ($n_2$ samples, learns $\beta^{(2)}$)
+- The hope is that if $\beta^{(1)}$ and $\beta^{(2)}$ are similar or if the data distributions are similar, then learning from the source task should help with the target task. 
+- $\beta$s are the model parameters. If $\beta^{(1)}$ and $\beta^{(2)}$ are similar, that means the same features are important in similar ways for both tasks. 
+- **β captures the relationship between features and labels.**
+
+If we think of spanish emails as source task and English emails as target task with limited examples, some components would overlap (sender's name, punctuation abuse) but some wouldn't (word frequencies for 2 different languages). $\beta^{(1)}$ and $\beta^{(2)}$ would be **partially similar.**
+##### 2 ways tasks can differ
+###### 1. Model Shift
+The relationship between the features (x) and the output (y) is different for the 2 tasks. Eg. in English, "free" usually leads to spam emails (high weight), but maybe isn't the case for Spanish. So $\beta^{(1)} \neq \beta^{(2)}$.
+- English spam: Mostly lottery/prize scams
+- Spanish spam: Mostly phishing for bank info
+- Different types of spam attacks entirely
+- Different features matter
+###### 2. Covariate Shift
+The distribution of x is different between tasks, but the $\beta$ remains the same (same x->y relationship). Eg. English emails might have a different mix of words/features, but if everything is translated perfectly, spam detection in Spanish works i.e. the concept of spam is the same for both tasks.
+- English spam: "FREE PRIZE CLICK HERE"
+- Spanish spam: "PREMIO GRATIS HAZ CLIC AQUÍ"
+- Both have similar spam patterns (urgent language, all caps, prizes), just different languages
+- If we had perfect translation, the same model would work
+
+Transfer learning helps most when:
+- tasks are similar (**small model shift: $\beta^1 \approx \beta^2$**)
+- data distributions are similar (**small covariate shift**)
+
+##### 2 Transfer Learning Strategies/Estimators
+###### 1. Hard Transfer: Hard Parameter Sharing (HPS)
+- Hard-code the shared components across tasks.
+- Force both tasks to learn the same $\beta$.
+- $$\text{Minimize: } \frac{1}{n_1 + n_2} \times \left[\sum \text{losses on source} + \sum \text{losses on target}\right]$$
+- Minimize: losses on source data + losses on target data (All using the same β)
+- Pooling all the data together and learning one model
+- Almost like saying: I believe spam detection for English and Spanish works the same way, so learn a single model for the two
+###### When does HPS (sharing same $\beta$) work well?
+- When $\beta^{1}$ $\approx \beta^2$ i.e. the model shift is small (model relationships are similar).
+- Covariate shift with different distributions but similar $\beta$ (ideal scenario: pure covariate shift where $\beta$ is the same)
+
+###### 2. Soft Transfer: Soft Parameter Sharing (SPS)
+- Use separate components for each task, and encourage these components to be close to each other
+- Intuition: The tasks should be similar, but we'll allow flexibility for differences
+- $$\text{Minimize: losses on source (using } \beta + z\text{) + losses on target (using } \beta\text{) + } \lambda ||z||^2$$
+- Allow the source task to have a slightly different model $\beta + z$, but the penalty term $\lambda||z||^2$ encourages $z$ to be small.
+	- if $\lambda$ is too large, z will be tiny (closer to HPS).
+	- if $\lambda$ is too small, z will be large (so more divergent tasks).
+	- So, we can adjust $\lambda$ for flexibility
+
+**OLS**: A natural baseline is when we do not use the source task data at all. That is, perform ordinary least squares regression using target task data alone.
+
+##### Optimality of the estimator
+###### How do we know there are no better estimators out there?
+This is about **minimax** lower bounds: proving that no algorithm can do fundamentally better than whatever we've designed.
+Essentially, asking the counter question, **What's the best possible performance ANY algorithm could achieve?**
+

@@ -1,0 +1,2 @@
+Everything is making you. Every step you take, every class, every project, every effort you make is shaping the life you envision for yourself. The results might not be the exact ones you imagined, or sometimes, you might feel like you're derailed from a path that you don't even know for certain exists. But know that all these derailments and moments of despair are momentary. You are exactly enough as you are; exactly where you're meant to be and will get everything that's meant for you.
+
