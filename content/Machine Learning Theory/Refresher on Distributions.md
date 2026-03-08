@@ -4,9 +4,9 @@ draft: false
 tags:
   -
 ---
-> *I occasionally keep mixing up distributions, do here's a reference for when I'd need it.*
+> *Here's an ongoing reference for probability distributions.*
 
-##### Gaussian (normal) distribution 
+#### Gaussian (normal) distribution 
 - The fundamental one
 - Bell curve
 - Heights of people, test scores
@@ -49,10 +49,8 @@ tags:
 	- $X \in {[0,1]}$
 
 ##### PMF
-$$\begin{align*}
-P(X = 1) &= p \\
-P(X = 0) &= 1 - p
-\end{align*}$$
+- $P(X = 1) = p$
+- $P(X = 0) = 1 - p$
 - More formally, 
 - $P(X = k) = p^k \cdot (1-p)^{1-k} \quad \text{for } k \in \{0, 1\}$
 - Mean: $\mathbb{E}[X] = p$
@@ -67,11 +65,17 @@ P(X = 0) &= 1 - p
 	- $X \in [a,b]$ (any real number between a and b)
 	- This is also a continuous distribution like Gaussian
 ##### PDF
-- $$f(x) = \begin{cases}
-\frac{1}{b-a} & \text{for } a \leq x \leq b \\
-0 & \text{otherwise}
-\end{cases}$$
-	- $\frac{1}{b-a}$ because the area under the curve must be equal to 1
-	- $\int_a^b \frac{1}{b-a} \, dx = \frac{b-a}{b-a} = 1 \quad$
+$$
+f(x) = \begin{cases}\frac{1}{b-a} & \text{for } a \leq x \leq b \\\\ 0 & \text{otherwise} \end{cases}
+$$
+-  $\frac{1}{b-a}$ because the area under the curve must be equal to 1
+- $\int_a^b \frac{1}{b-a} \, dx = \frac{b-a}{b-a} = 1 \quad$
 - Mean: $\mathbb{E}[X] = \frac{a+b}{2}$ (midpoint)
 - Variance: $\operatorname{Var}(X) = \frac{(b-a)^2}{12}$
+
+#### Poisson Trials
+> *This is not a distribution per se, but worth noting since it's different from Poisson Distribution*
+
+- A sequence of independent 0-1 random variable (either something happens (1) or it doesn't (0)).
+- Each trial can have a different probability of success
+- The Poisson distribution actually *approximates* the sum of many Poisson trials when the individual probabilities are very small and $n$ is large. But they're not the same thing.

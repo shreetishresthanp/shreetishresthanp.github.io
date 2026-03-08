@@ -1,9 +1,10 @@
 ---
-title: What I know so far about interpretability (a month into it)
+title: What I know so far about interpretability
 draft: false
 tags:
   - mech_interp
 ---
+> *This was written about a month into learning about (mechanistic) interpretability.*
 ##### Interpretability is a loosely-defined term
 I naively used to think interpretability meant explainability, but have since, come to know better. I've learnt about faithfulness and plausibility, various notions of transparency (simulatability, decomposability and algorithmic transparency) and post-hoc interpretability and have come to the conclusion that there is no well-defined universal meaning for AI interpretability. It can mean different things to different people and can change what it means for a single individual based on whatever they're currently working on. But this was actually a freeing conclusion since it now means, I can define it based on the scope of my ongoing work at any given time.
 ##### I find mechanistic interpretability to still be interesting
