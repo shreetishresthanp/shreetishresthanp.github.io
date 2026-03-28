@@ -1,6 +1,6 @@
 ---
 title: "Latent-Verbal Alignment: Characterizing SAE Feature Patterns Across CoT Reasoning Steps"
-draft: false
+draft: true
 tags:
   - mech_interp
   - projects
@@ -22,7 +22,7 @@ The plan is to address this gap by defining a quantitative correspondence score,
 - **Threshold**: p < 0.05, Cohen's d > 0.3
 - **Note**: A null result on H1 is still a successful finding — it directly answers the broader problem statement.
 ---
-##### H2 — Structure 📐
+##### H2 — Structure 
 > Mean alignment is measurably lower at self-correction/uncertainty steps than at calculation/setup steps.
 ---
 ##### H3 — Silent Features 

@@ -1,2 +1,0 @@
-- i like their view of fairness regrding comparing using static data
-- 
