@@ -6,6 +6,7 @@ tags:
 ---
 UbiWell: Broken leg problem
 what happens if we add something like: what combinations are harmful with phosphorus (technically, we're not asking to build a bomb: ML theory)
+misleading
 
 
 
@@ -30,3 +31,6 @@ what happens if we add something like: what combinations are harmful with phosph
     Mechanisms are stable (or not) across cohorts/settings and have identifiable failure modes.
 
 While I align with the pure science view for interpretability, these papers also make me think if the focus needs to now be more towards evaluation and benchmarks. because most work has been monitoring, steering. Cynthia's paper came out as critique for then models, CoT for current models, it's a cycle
+
+- Causal Tracing
+- 
