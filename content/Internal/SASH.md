@@ -1,3 +1,9 @@
+---
+title: Base Template
+draft: true
+tags:
+  -
+---
 #### Q3
 In my MS research, I study how human behavioral context can be modeled from smartphone and wearable sensor data, with a specific interest in how context evolves over time and what representations models learn.
 

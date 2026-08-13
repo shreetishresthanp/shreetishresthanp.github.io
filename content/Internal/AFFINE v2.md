@@ -1,3 +1,9 @@
+---
+title: Base Template
+draft: true
+tags:
+  -
+---
 Interpretability feels like a field still defining its own foundations. That's exactly what draws me to it, but it also means rigorous evaluation is challenging. Working through MAIA's material on inner and outer alignment and scalable oversight sharpened why that gap matters to me. A model can look aligned behaviorally while pursuing something different internally, and if oversight is to scale past what humans can directly check, we need ways to verify alignment that don't rely purely on watching outputs. ARENA's dedicated chapter on Evaluations signals a seriousness about verifying interpretability discoveries rather than just producing them, which feels like the right response to a field that's still developing agreed-upon standards for what counts as evidence.
 
 Beyond the technical depth this program offers, the chance to learn alongside peers working on similar questions excites me just as much. I see this as an opportunity to grow both my technical skills and my engagement with the broader alignment community.
