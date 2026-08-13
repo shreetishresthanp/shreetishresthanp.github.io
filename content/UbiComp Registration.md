@@ -1,3 +1,9 @@
+---
+title: Base Template
+draft: true
+tags:
+  -
+---
 - [ ] Registration: https://web.cvent.com/event/e68d4ef0-9cb3-44eb-b8f4-028bf7ebeb96/regPage:9984ac01-5de2-48ac-980c-7fb535ff53e5?rp=fccb281a-e742-4a5b-b9ce-97688cc8e661
 	- [ ] Banquet vs not
 	- [ ] Review
