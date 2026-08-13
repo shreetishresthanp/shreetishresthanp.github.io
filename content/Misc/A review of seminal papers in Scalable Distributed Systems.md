@@ -2,7 +2,8 @@
 title: A review of seminal papers in Scalable Distributed Systems
 draft: false
 tags:
-  - misc_blog
+  - papers
+  - misc_topics
 ---
 > *A note on format: Unlike traditional paper summaries that explain concepts in detail (LLMs handle that well), this is a "critical" review—my honest takes on what these foundational papers got right, where they fell short, and how they influenced my approach to building scalable systems.*
 ## What is a Distributed System, and why do we need them?

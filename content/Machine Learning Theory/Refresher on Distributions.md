@@ -1,5 +1,5 @@
 ---
-title: Refresher on Distributions
+title: 0. Refresher on Distributions
 draft: false
 tags:
   -
