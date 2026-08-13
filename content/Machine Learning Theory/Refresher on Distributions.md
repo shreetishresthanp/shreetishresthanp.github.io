@@ -6,7 +6,7 @@ tags:
 ---
 > *Here's an ongoing reference for probability distributions.*
 
-#### Gaussian (normal) distribution 
+### Gaussian (normal) distribution 
 - The fundamental one
 - Bell curve
 - Heights of people, test scores
@@ -24,7 +24,7 @@ tags:
 	- $(x-\mu)^2$: Squared distance from mean -- makes it symmetric
 	- $2\sigma^2$: Controls the spread -- larger $\sigma^2$ means wider bell
 
-#### Poisson Distribution
+### Poisson Distribution
 - Models number of events occurring in a fixed time interval
 - number of emails per hour, typos per page
 ##### Notation
@@ -40,7 +40,7 @@ tags:
 - Variance: $\operatorname{Var}(X) = \lambda$ (mean = variance!)
 - For MGF computation, sum over $k=1,2,...$ and recognize:
 	- $e^x = \sum_{k=0}^{\infty} \frac{x^k}{k!}$
-#### Bernoulli Distribution
+### Bernoulli Distribution
 - Single trial with exactly two outcomes (success/failure)
 - Coin flip (heads/tails), exams (pass, fail)
 ##### Notation
@@ -56,7 +56,7 @@ tags:
 - Mean: $\mathbb{E}[X] = p$
 - Variance: $\operatorname{Var}(X) = p(1-p)$
 
-#### Uniform Distribution
+### Uniform Distribution
 - A random variable where every value within the interval is equally likely
 - random point on line, random angle between 0 and 360
 ##### Notation
@@ -73,7 +73,7 @@ $$
 - Mean: $\mathbb{E}[X] = \frac{a+b}{2}$ (midpoint)
 - Variance: $\operatorname{Var}(X) = \frac{(b-a)^2}{12}$
 
-#### Poisson Trials
+### Poisson Trials
 > *This is not a distribution per se, but worth noting since it's different from Poisson Distribution*
 
 - A sequence of independent 0-1 random variable (either something happens (1) or it doesn't (0)).
